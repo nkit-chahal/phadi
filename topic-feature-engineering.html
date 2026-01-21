@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Engineering | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">🔧</div>
+            <div class="topic-info">
+                <span class="topic-category">ML Fundamentals</span>
+                <h1 class="topic-title">Feature Engineering</h1>
+                <p class="topic-subtitle">Transforming raw data into features that improve model performance</p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 Quick Summary</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">📏</span>
+                    <div>
+                        <strong>Scaling</strong>
+                        <p>Normalization [0,1] or Standardization (mean=0, std=1)</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🔤</span>
+                    <div>
+                        <strong>Encoding</strong>
+                        <p>One-hot for nominal, Label/Ordinal for ordered categories</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🔀</span>
+                    <div>
+                        <strong>Feature Creation</strong>
+                        <p>Interaction terms, polynomial features, domain-specific transforms</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>📖 Key Techniques</h2>
+
+            <h3>1. Scaling / Normalization</h3>
+            <ul>
+                <li><strong>Min-Max Normalization:</strong> Scale to [0, 1]. x' = (x - min) / (max - min)</li>
+                <li><strong>Standardization (Z-score):</strong> Mean=0, Std=1. x' = (x - μ) / σ</li>
+                <li><strong>Robust Scaler:</strong> Uses median and IQR, robust to outliers</li>
+            </ul>
+            <p><strong>When to use:</strong></p>
+            <ul>
+                <li>Gradient-based models (neural nets, linear regression): Always scale!</li>
+                <li>Tree-based models: Not required, but often still helps</li>
+            </ul>
+
+            <h3>2. Categorical Encoding</h3>
+            <ul>
+                <li><strong>One-Hot:</strong> Creates binary column per category. For nominal data (no order).</li>
+                <li><strong>Label Encoding:</strong> Assigns integers. For ordinal data (has order).</li>
+                <li><strong>Target Encoding:</strong> Replace category with mean of target. Powerful but can leak.</li>
+                <li><strong>Frequency Encoding:</strong> Replace with frequency count.</li>
+            </ul>
+
+            <h3>3. Handling Missing Values</h3>
+            <ul>
+                <li><strong>Drop:</strong> If very few missing values</li>
+                <li><strong>Mean/Median/Mode:</strong> Simple imputation</li>
+                <li><strong>KNN Imputer:</strong> Use similar samples</li>
+                <li><strong>Add indicator:</strong> Binary column for "was_missing"</li>
+            </ul>
+
+            <h3>4. Feature Creation</h3>
+            <ul>
+                <li><strong>Polynomial Features:</strong> x², x³, x₁×x₂</li>
+                <li><strong>Log Transform:</strong> For skewed distributions</li>
+                <li><strong>Binning:</strong> Convert continuous to categorical</li>
+                <li><strong>Date Features:</strong> Extract day, month, year, day_of_week, is_weekend</li>
+                <li><strong>Text Features:</strong> TF-IDF, word counts, embeddings</li>
+            </ul>
+
+            <h3>5. Feature Selection</h3>
+            <ul>
+                <li><strong>Correlation:</strong> Remove highly correlated features</li>
+                <li><strong>Variance Threshold:</strong> Remove low-variance features</li>
+                <li><strong>Feature Importance:</strong> From tree-based models</li>
+                <li><strong>RFE:</strong> Recursive Feature Elimination</li>
+                <li><strong>L1 Regularization:</strong> Automatic feature selection</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>💻 Code Examples</h2>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Scaling and Encoding Pipeline</span>
+                </div>
+                <pre><code>from sklearn.preprocessing import (
+    StandardScaler, MinMaxScaler, RobustScaler,
+    OneHotEncoder, LabelEncoder
+)
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+
+# Define column types
+numeric_features = ['age', 'income', 'balance']
+categorical_features = ['city', 'gender', 'occupation']
+
+# Create preprocessor
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', StandardScaler(), numeric_features),
+        ('cat', OneHotEncoder(drop='first', handle_unknown='ignore'), 
+         categorical_features)
+    ]
+)
+
+# Combine with model in pipeline
+pipeline = Pipeline([
+    ('preprocessor', preprocessor),
+    ('classifier', LogisticRegression())
+])
+
+# Fit and predict
+pipeline.fit(X_train, y_train)
+predictions = pipeline.predict(X_test)</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Handling Missing Values</span>
+                </div>
+                <pre><code>from sklearn.impute import SimpleImputer, KNNImputer
+import pandas as pd
+
+# Check missing values
+print(df.isnull().sum())
+
+# Simple imputation
+imputer = SimpleImputer(strategy='median')  # or 'mean', 'mode'
+df['age'] = imputer.fit_transform(df[['age']])
+
+# KNN imputation (uses similar samples)
+knn_imputer = KNNImputer(n_neighbors=5)
+df_imputed = pd.DataFrame(
+    knn_imputer.fit_transform(df),
+    columns=df.columns
+)
+
+# Add missing indicator
+df['age_was_missing'] = df['age'].isnull().astype(int)
+df['age'] = df['age'].fillna(df['age'].median())</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Feature Creation Examples</span>
+                </div>
+                <pre><code>import pandas as pd
+import numpy as np
+from sklearn.preprocessing import PolynomialFeatures
+
+# Polynomial features
+poly = PolynomialFeatures(degree=2, include_bias=False)
+X_poly = poly.fit_transform(X[['x1', 'x2']])
+# Creates: x1, x2, x1², x2², x1*x2
+
+# Log transform (for skewed data)
+df['income_log'] = np.log1p(df['income'])  # log(1+x) handles zeros
+
+# Date features
+df['date'] = pd.to_datetime(df['date'])
+df['day_of_week'] = df['date'].dt.dayofweek
+df['month'] = df['date'].dt.month
+df['is_weekend'] = df['day_of_week'].isin([5, 6]).astype(int)
+df['quarter'] = df['date'].dt.quarter
+
+# Binning
+df['age_group'] = pd.cut(df['age'], 
+    bins=[0, 18, 35, 50, 65, 100], 
+    labels=['child', 'young', 'middle', 'senior', 'elderly'])
+
+# Interaction features
+df['price_per_sqft'] = df['price'] / df['sqft']
+df['bmi'] = df['weight'] / (df['height'] ** 2)</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Feature Selection</span>
+                </div>
+                <pre><code>from sklearn.feature_selection import (
+    SelectKBest, f_classif, RFE, VarianceThreshold
+)
+from sklearn.ensemble import RandomForestClassifier
+
+# Remove low variance features
+selector = VarianceThreshold(threshold=0.01)
+X_filtered = selector.fit_transform(X)
+
+# Select K best features
+selector = SelectKBest(f_classif, k=10)
+X_best = selector.fit_transform(X, y)
+best_features = X.columns[selector.get_support()]
+
+# Recursive Feature Elimination
+model = RandomForestClassifier()
+rfe = RFE(model, n_features_to_select=10)
+rfe.fit(X, y)
+print(f"Selected features: {X.columns[rfe.support_]}")
+
+# Feature importance from trees
+model.fit(X, y)
+importance = pd.DataFrame({
+    'feature': X.columns,
+    'importance': model.feature_importances_
+}).sort_values('importance', ascending=False)
+print(importance.head(10))</code></pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🎤 Interview Questions & Answers</h2>
+
+            <div class="qa-list">
+                <div class="qa-item" data-index="0">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>When to use normalization vs standardization?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Normalization (Min-Max):</strong> When you need bounded range [0,1], for neural
+                                networks with bounded activations, image pixels</li>
+                            <li><strong>Standardization (Z-score):</strong> When data has outliers, for SVM, Logistic
+                                Regression, algorithms assuming normal distribution</li>
+                            <li><strong>Robust Scaler:</strong> When you have many outliers</li>
+                        </ul>
+                        <p>For most cases, Standardization is safer as it's less affected by outliers.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="1">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>What is one-hot encoding and when does it fail?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>One-hot encoding creates a binary column for each category. Category "red" becomes [1,0,0],
+                            "blue" becomes [0,1,0].</p>
+                        <p><strong>When it fails:</strong></p>
+                        <ul>
+                            <li><strong>High cardinality:</strong> 1000 categories = 1000 columns (memory issues)</li>
+                            <li><strong>Tree-based models:</strong> Can be inefficient, target encoding often better
+                            </li>
+                            <li><strong>New categories at test time:</strong> Need handle_unknown='ignore'</li>
+                        </ul>
+                        <p><strong>Alternatives:</strong> Target encoding, embedding layers, hashing</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="2">
+                    <div class="qa-question">
+                        <span class="q-icon">Q3</span>
+                        <span>How do you handle missing values?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>Depends on the amount and pattern of missingness:</p>
+                        <ul>
+                            <li><strong>
+                                    < 5% missing:</strong> Simple imputation (mean/median) usually fine</li>
+                            <li><strong>5-20% missing:</strong> KNN imputation or model-based imputation</li>
+                            <li><strong>> 20% missing:</strong> Consider dropping feature, or add "is_missing" indicator
+                            </li>
+                            <li><strong>MNAR (Missing Not At Random):</strong> Missingness is informative, add indicator
+                            </li>
+                        </ul>
+                        <p>Always analyze WHY data is missing before choosing method!</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="3">
+                    <div class="qa-question">
+                        <span class="q-icon">Q4</span>
+                        <span>How did you apply feature engineering in your projects?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer (Personalized for Ankit):</strong></p>
+                        <ul>
+                            <li><strong>Crop yield forecasting (AgriWatch):</strong>
+                                <ul>
+                                    <li>Created lag features (rainfall_last_3months)</li>
+                                    <li>Rolling statistics (mean_temp_30day)</li>
+                                    <li>Seasonal indicators (monsoon_intensity)</li>
+                                    <li>Geospatial features from satellite data</li>
+                                </ul>
+                            </li>
+                            <li><strong>RAG breakdown intelligence (Trident):</strong>
+                                <ul>
+                                    <li>Text preprocessing: lowercase, remove PII</li>
+                                    <li>Extracted machine codes, timestamps</li>
+                                    <li>Created semantic embeddings for similarity</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🔗 Related Topics</h2>
+            <div class="related-grid">
+                <a href="topic-data-splits.html" class="related-link">
+                    <span class="related-icon">✂️</span>
+                    <span>Train/Val/Test Split</span>
+                </a>
+                <a href="topic-regularization.html" class="related-link">
+                    <span class="related-icon">🛡️</span>
+                    <span>Regularization (L1)</span>
+                </a>
+                <a href="topic-bias-variance.html" class="related-link">
+                    <span class="related-icon">⚖️</span>
+                    <span>Bias-Variance</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

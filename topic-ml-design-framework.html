@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML System Design Framework | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">🎯</div>
+            <div class="topic-info">
+                <span class="topic-category">ML System Design</span>
+                <h1 class="topic-title">ML System Design Framework</h1>
+                <p class="topic-subtitle">A structured approach to tackle any ML system design question</p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 The 6-Step Framework</h2>
+            <div class="diagram-box">
+                <pre>
+┌─────────────────────────────────────────────────────────────────┐
+│  1. PROBLEM     →  2. METRICS    →  3. DATA                     │
+│  Clarify scope     Define success    Sources & pipelines        │
+├─────────────────────────────────────────────────────────────────┤
+│  4. MODEL       →  5. SERVING    →  6. MONITORING               │
+│  Architecture      Deployment        Detect & fix issues        │
+└─────────────────────────────────────────────────────────────────┘
+                </pre>
+            </div>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">⏱️</span>
+                    <div>
+                        <strong>Time Management</strong>
+                        <p>45 min interview: 5 min clarify, 10 min data, 15 min model, 10 min serving, 5 min monitoring
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>📖 Step 1: Problem Definition (5 min)</h2>
+
+            <h3>Always Clarify:</h3>
+            <ul>
+                <li><strong>Business goal:</strong> What are we trying to achieve? Revenue? Engagement?</li>
+                <li><strong>User experience:</strong> How will this affect the user?</li>
+                <li><strong>Constraints:</strong> Latency, throughput, cost, resources</li>
+                <li><strong>Scale:</strong> How many users? Requests per second?</li>
+            </ul>
+
+            <h3>Example Questions to Ask:</h3>
+            <ul>
+                <li>"What's the acceptable latency? Real-time (<100ms) or batch is fine?"</li>
+                <li>"How much training data do we have?"</li>
+                <li>"Is this a new system or improving existing?"</li>
+                <li>"What's the cost budget for infrastructure?"</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>📊 Step 2: Define Metrics (5 min)</h2>
+
+            <h3>Offline Metrics (Development)</h3>
+            <ul>
+                <li><strong>Classification:</strong> Precision, Recall, F1, AUC-ROC</li>
+                <li><strong>Regression:</strong> MSE, MAE, R²</li>
+                <li><strong>Ranking:</strong> NDCG, MRR, MAP</li>
+                <li><strong>Recommendation:</strong> Hit Rate, Coverage, Diversity</li>
+            </ul>
+
+            <h3>Online Metrics (Production)</h3>
+            <ul>
+                <li><strong>Business:</strong> CTR, Conversion, Revenue, DAU</li>
+                <li><strong>User Experience:</strong> Session time, Bounce rate</li>
+                <li><strong>System:</strong> Latency (p50, p99), Throughput, Error rate</li>
+            </ul>
+
+            <h3>Counter Metrics (Guardrails)</h3>
+            <p>Metrics that should NOT degrade: e.g., if optimizing engagement, ensure content quality doesn't drop.</p>
+        </section>
+
+        <section class="content-card">
+            <h2>📦 Step 3: Data (10 min)</h2>
+
+            <h3>Data Sources</h3>
+            <ul>
+                <li>User interactions (clicks, views, purchases)</li>
+                <li>User profiles (demographics, preferences)</li>
+                <li>Item/content features</li>
+                <li>Contextual data (time, location, device)</li>
+            </ul>
+
+            <h3>Data Pipeline</h3>
+            <div class="diagram-box">
+                <pre>
+Raw Data → ETL → Feature Store → Training Pipeline
+                      ↓
+              Real-time Features → Serving
+                </pre>
+            </div>
+
+            <h3>Key Considerations</h3>
+            <ul>
+                <li><strong>Labeling:</strong> How do we get labels? Explicit feedback vs implicit signals</li>
+                <li><strong>Freshness:</strong> How often should data be updated?</li>
+                <li><strong>Quality:</strong> Missing values, outliers, biases</li>
+                <li><strong>Privacy:</strong> PII handling, GDPR compliance</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>🧠 Step 4: Model (15 min)</h2>
+
+            <h3>Start Simple, Then Iterate</h3>
+            <ol>
+                <li><strong>Baseline:</strong> Rule-based or simple heuristic</li>
+                <li><strong>Simple ML:</strong> Logistic regression, XGBoost</li>
+                <li><strong>Deep Learning:</strong> If needed and justified</li>
+            </ol>
+
+            <h3>Feature Engineering</h3>
+            <ul>
+                <li>User features: history, preferences, demographics</li>
+                <li>Item features: category, price, embeddings</li>
+                <li>Cross features: user-item interactions</li>
+                <li>Temporal features: time of day, recency</li>
+            </ul>
+
+            <h3>Model Architecture Choices</h3>
+            <ul>
+                <li><strong>Recommendation:</strong> Two-tower, Wide & Deep, DCN</li>
+                <li><strong>Ranking:</strong> GBDT, LambdaMART, Transformer</li>
+                <li><strong>NLP:</strong> BERT, fine-tuned LLM</li>
+                <li><strong>Vision:</strong> CNN, ViT</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>🚀 Step 5: Serving (10 min)</h2>
+
+            <h3>Serving Options</h3>
+            <ul>
+                <li><strong>Batch:</strong> Pre-compute predictions, store in cache</li>
+                <li><strong>Real-time:</strong> Compute on request, higher latency</li>
+                <li><strong>Hybrid:</strong> Batch for candidates, real-time for ranking</li>
+            </ul>
+
+            <h3>Optimization Techniques</h3>
+            <ul>
+                <li><strong>Model:</strong> Quantization, pruning, distillation</li>
+                <li><strong>Infra:</strong> GPU serving, batching, caching</li>
+                <li><strong>Architecture:</strong> Two-stage (retrieval + ranking)</li>
+            </ul>
+
+            <h3>A/B Testing</h3>
+            <ul>
+                <li>Random traffic split</li>
+                <li>Statistical significance (usually 95%)</li>
+                <li>Watch for novelty effects</li>
+                <li>Canary deployment for safety</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>📈 Step 6: Monitoring (5 min)</h2>
+
+            <h3>What to Monitor</h3>
+            <ul>
+                <li><strong>Model performance:</strong> Accuracy/precision drift</li>
+                <li><strong>Data drift:</strong> Input distribution changes</li>
+                <li><strong>System health:</strong> Latency, errors, throughput</li>
+                <li><strong>Business metrics:</strong> CTR, revenue impact</li>
+            </ul>
+
+            <h3>Handling Issues</h3>
+            <ul>
+                <li><strong>Alerts:</strong> Set thresholds for key metrics</li>
+                <li><strong>Fallback:</strong> Serve cached/baseline predictions</li>
+                <li><strong>Retraining:</strong> Scheduled or triggered by drift</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>🎤 Interview Questions & Answers</h2>
+
+            <div class="qa-list">
+                <div class="qa-item" data-index="0">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>How do you approach an ML system design question?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>I follow a structured 6-step framework:</p>
+                        <ol>
+                            <li><strong>Clarify:</strong> Understand problem, constraints, scale</li>
+                            <li><strong>Metrics:</strong> Define offline and online success metrics</li>
+                            <li><strong>Data:</strong> Identify sources, pipeline, features</li>
+                            <li><strong>Model:</strong> Start simple, justify complexity</li>
+                            <li><strong>Serving:</strong> Batch vs real-time, optimization</li>
+                            <li><strong>Monitoring:</strong> Drift detection, alerts, retraining</li>
+                        </ol>
+                        <p>I always start by asking clarifying questions to ensure I'm solving the right problem.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="1">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>What's the difference between offline and online metrics?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Offline metrics</strong> (development): Measured on held-out test set. Examples:
+                                AUC, NDCG, MSE. Used to compare models before deployment.</li>
+                            <li><strong>Online metrics</strong> (production): Measured on live traffic. Examples: CTR,
+                                revenue, session time. The ultimate measure of success.</li>
+                        </ul>
+                        <p>Offline metrics proxy online metrics but don't always correlate perfectly. A model with
+                            better AUC might not improve CTR. That's why A/B testing is essential.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="2">
+                    <div class="qa-question">
+                        <span class="q-icon">Q3</span>
+                        <span>When would you use batch vs real-time serving?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p><strong>Batch serving:</strong></p>
+                        <ul>
+                            <li>Predictions don't need to be real-time</li>
+                            <li>Large candidate set (pre-compute recommendations)</li>
+                            <li>Cost-sensitive (cheaper to batch process)</li>
+                        </ul>
+                        <p><strong>Real-time serving:</strong></p>
+                        <ul>
+                            <li>Need fresh context (current session, location)</li>
+                            <li>Personalization based on recent behavior</li>
+                            <li>Dynamic content (search, fraud detection)</li>
+                        </ul>
+                        <p><strong>Hybrid:</strong> Batch for candidate generation, real-time for final ranking (most
+                            common for recommendations).</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="3">
+                    <div class="qa-question">
+                        <span class="q-icon">Q4</span>
+                        <span>Walk through an ML system you designed.</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer (Your Project - RAG at Trident):</strong></p>
+                        <ul>
+                            <li><strong>Problem:</strong> Reduce machine breakdown resolution time</li>
+                            <li><strong>Metrics:</strong> Resolution time (primary), operator satisfaction, retrieval
+                                relevance</li>
+                            <li><strong>Data:</strong> 50K breakdown reports, maintenance manuals, chunked for RAG</li>
+                            <li><strong>Model:</strong> Embeddings (ada-002) + GPT-4 for generation</li>
+                            <li><strong>Serving:</strong> Real-time API, <2s response time requirement</li>
+                            <li><strong>Monitoring:</strong> RAGAS metrics, operator feedback loop, usage analytics</li>
+                        </ul>
+                        <p><strong>Result:</strong> 30% reduction in resolution time.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🔗 Related Topics</h2>
+            <div class="related-grid">
+                <a href="topic-ml-pipeline.html" class="related-link">
+                    <span class="related-icon">🔄</span>
+                    <span>ML Pipeline Architecture</span>
+                </a>
+                <a href="topic-model-serving.html" class="related-link">
+                    <span class="related-icon">🚀</span>
+                    <span>Model Serving</span>
+                </a>
+                <a href="topic-recsys-design.html" class="related-link">
+                    <span class="related-icon">📈</span>
+                    <span>Recommendation Systems</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

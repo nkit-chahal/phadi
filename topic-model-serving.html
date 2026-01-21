@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Serving & Inference | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">🚀</div>
+            <div class="topic-info">
+                <span class="topic-category">ML System Design</span>
+                <h1 class="topic-title">Model Serving & Inference</h1>
+                <p class="topic-subtitle">Deploying models at scale with low latency</p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 Serving Options</h2>
+            <div class="diagram-box">
+                <pre>
+| Type      | Latency | Use Case                      | Example              |
+|-----------|---------|-------------------------------|----------------------|
+| Batch     | Hours   | Reports, pre-computed recs    | Nightly predictions  |
+| Real-time | <100ms  | Search, fraud detection       | API endpoint         |
+| Streaming | Seconds | Event-driven, near real-time  | Kafka + model        |
+                </pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>📖 Serving Patterns</h2>
+
+            <h3>Batch Inference</h3>
+            <ul>
+                <li>Pre-compute predictions, store in database/cache</li>
+                <li>Good for: Recommendations, reports, scheduled predictions</li>
+                <li>Lower cost, simpler infrastructure</li>
+            </ul>
+
+            <h3>Real-time Inference</h3>
+            <ul>
+                <li>Compute predictions on-demand via API</li>
+                <li>Good for: Search, fraud, personalization with fresh context</li>
+                <li>Requires low-latency infrastructure</li>
+            </ul>
+
+            <h3>Hybrid (Two-Stage)</h3>
+            <ul>
+                <li><strong>Stage 1:</strong> Batch - generate candidates</li>
+                <li><strong>Stage 2:</strong> Real-time - rank with fresh features</li>
+                <li>Common pattern for recommendations at scale</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>⚡ Optimization Techniques</h2>
+
+            <h3>Model Optimization</h3>
+            <ul>
+                <li><strong>Quantization:</strong> FP32 → INT8, 2-4x faster, minimal accuracy loss</li>
+                <li><strong>Pruning:</strong> Remove unnecessary weights</li>
+                <li><strong>Distillation:</strong> Train smaller model to mimic larger one</li>
+                <li><strong>ONNX:</strong> Convert to optimized runtime format</li>
+            </ul>
+
+            <h3>Infrastructure Optimization</h3>
+            <ul>
+                <li><strong>GPU serving:</strong> NVIDIA Triton, TensorRT</li>
+                <li><strong>Batching:</strong> Group requests for GPU efficiency</li>
+                <li><strong>Caching:</strong> Store frequent predictions</li>
+                <li><strong>Model replication:</strong> Multiple instances behind load balancer</li>
+            </ul>
+
+            <h3>Architecture Patterns</h3>
+            <ul>
+                <li><strong>Microservices:</strong> Separate model from application logic</li>
+                <li><strong>Sidecar:</strong> Model container alongside app container</li>
+                <li><strong>Edge deployment:</strong> Model on device for ultra-low latency</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>💻 Code Examples</h2>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">FastAPI Model Serving</span>
+                </div>
+                <pre><code>from fastapi import FastAPI
+from pydantic import BaseModel
+import torch
+import time
+
+app = FastAPI()
+
+# Load model once at startup
+model = torch.load("model.pt")
+model.eval()
+
+class PredictRequest(BaseModel):
+    features: list[float]
+
+class PredictResponse(BaseModel):
+    prediction: float
+    latency_ms: float
+
+@app.post("/predict", response_model=PredictResponse)
+async def predict(request: PredictRequest):
+    start = time.time()
+    
+    # Inference
+    with torch.no_grad():
+        input_tensor = torch.tensor([request.features])
+        output = model(input_tensor)
+        prediction = output.item()
+    
+    latency = (time.time() - start) * 1000
+    
+    return PredictResponse(
+        prediction=prediction,
+        latency_ms=latency
+    )
+
+@app.get("/health")
+async def health():
+    return {"status": "healthy"}</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Model Quantization</span>
+                </div>
+                <pre><code>import torch
+
+# Dynamic quantization (easiest)
+model_fp32 = torch.load("model.pt")
+model_int8 = torch.quantization.quantize_dynamic(
+    model_fp32,
+    {torch.nn.Linear},  # Quantize linear layers
+    dtype=torch.qint8
+)
+
+# Save quantized model
+torch.save(model_int8, "model_quantized.pt")
+
+# Compare sizes
+import os
+print(f"FP32: {os.path.getsize('model.pt') / 1e6:.1f} MB")
+print(f"INT8: {os.path.getsize('model_quantized.pt') / 1e6:.1f} MB")
+
+# Benchmark
+import time
+def benchmark(model, input_data, n=100):
+    model.eval()
+    with torch.no_grad():
+        start = time.time()
+        for _ in range(n):
+            _ = model(input_data)
+        return (time.time() - start) / n * 1000
+
+print(f"FP32 latency: {benchmark(model_fp32, x):.2f} ms")
+print(f"INT8 latency: {benchmark(model_int8, x):.2f} ms")</code></pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🎤 Interview Questions & Answers</h2>
+
+            <div class="qa-list">
+                <div class="qa-item" data-index="0">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>How do you reduce model inference latency?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Model:</strong> Quantization (INT8), pruning, distillation</li>
+                            <li><strong>Runtime:</strong> ONNX Runtime, TensorRT for GPU</li>
+                            <li><strong>Infra:</strong> GPU serving, request batching, caching</li>
+                            <li><strong>Architecture:</strong> Smaller model for initial filter, larger for final</li>
+                        </ul>
+                        <p>Trade-off: Always benchmark accuracy vs latency impact.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="1">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>How do you handle model updates in production?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Canary deployment:</strong> Route 5% traffic to new model, monitor</li>
+                            <li><strong>A/B testing:</strong> Random split, measure business metrics</li>
+                            <li><strong>Shadow mode:</strong> New model runs in parallel, compare outputs</li>
+                            <li><strong>Rollback plan:</strong> Quick revert if metrics degrade</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="2">
+                    <div class="qa-question">
+                        <span class="q-icon">Q3</span>
+                        <span>Describe your model deployment experience.</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer (Your Project):</strong></p>
+                        <p>At Lincode - YOLOv5 defect detection:</p>
+                        <ul>
+                            <li><strong>Optimization:</strong> Converted to ONNX, quantized to INT8</li>
+                            <li><strong>Latency:</strong> Reduced from 100ms to 40ms</li>
+                            <li><strong>Edge deployment:</strong> NVIDIA Jetson for on-premise inference</li>
+                            <li><strong>Throughput:</strong> 100 parts/minute requirement met</li>
+                        </ul>
+                        <p>Validated accuracy after quantization - only 0.5% mAP drop, acceptable trade-off.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🔗 Related Topics</h2>
+            <div class="related-grid">
+                <a href="topic-ml-design-framework.html" class="related-link">
+                    <span class="related-icon">🎯</span>
+                    <span>ML Design Framework</span>
+                </a>
+                <a href="topic-ml-pipeline.html" class="related-link">
+                    <span class="related-icon">🔄</span>
+                    <span>ML Pipeline</span>
+                </a>
+                <a href="topic-recsys-design.html" class="related-link">
+                    <span class="related-icon">📈</span>
+                    <span>Recommendation Systems</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimizers | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">🔄</div>
+            <div class="topic-info">
+                <span class="topic-category">ML Fundamentals</span>
+                <h1 class="topic-title">Optimizers</h1>
+                <p class="topic-subtitle">Algorithms that update model weights to minimize loss</p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 Quick Summary</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">🐢</span>
+                    <div>
+                        <strong>SGD</strong>
+                        <p>Simple, needs tuning. Add momentum for speed.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">⚡</span>
+                    <div>
+                        <strong>Adam</strong>
+                        <p>Default choice. Adaptive LR + momentum. Works out of the box.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🤖</span>
+                    <div>
+                        <strong>AdamW</strong>
+                        <p>Adam + proper weight decay. Best for Transformers/LLMs.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>📖 Optimizer Comparison</h2>
+
+            <h3>SGD (Stochastic Gradient Descent)</h3>
+            <div class="formula-box">
+                <code>w = w - lr × ∇L(w)</code>
+            </div>
+            <ul>
+                <li><strong>Pros:</strong> Simple, well-understood, good generalization</li>
+                <li><strong>Cons:</strong> Slow convergence, sensitive to learning rate</li>
+                <li><strong>Tip:</strong> Use with momentum (0.9) and learning rate scheduling</li>
+            </ul>
+
+            <h3>SGD with Momentum</h3>
+            <div class="formula-box">
+                <code>v = β×v + ∇L(w)  |  w = w - lr×v</code>
+            </div>
+            <ul>
+                <li>Momentum helps escape local minima and speeds up convergence</li>
+                <li>β typically 0.9 (accumulates 90% of previous velocity)</li>
+            </ul>
+
+            <h3>Adam (Adaptive Moment Estimation)</h3>
+            <div class="formula-box">
+                <code>m = β₁×m + (1-β₁)×g  |  v = β₂×v + (1-β₂)×g²</code>
+            </div>
+            <ul>
+                <li><strong>Combines:</strong> Momentum (m) + RMSprop (v)</li>
+                <li><strong>Adaptive LR:</strong> Different learning rate per parameter</li>
+                <li><strong>Defaults:</strong> β₁=0.9, β₂=0.999, lr=0.001</li>
+                <li><strong>Best for:</strong> Most deep learning tasks, quick prototyping</li>
+            </ul>
+
+            <h3>AdamW</h3>
+            <ul>
+                <li><strong>Fix:</strong> Decouples weight decay from gradient update</li>
+                <li><strong>Why it matters:</strong> Proper L2 regularization in Adam</li>
+                <li><strong>Best for:</strong> Transformers, BERT, GPT, LLMs</li>
+            </ul>
+
+            <h3>RMSprop</h3>
+            <ul>
+                <li>Adaptive learning rate per parameter</li>
+                <li>Good for RNNs with non-stationary problems</li>
+                <li>Predecessor to Adam</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>💻 Code Examples</h2>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">PyTorch Optimizers</span>
+                </div>
+                <pre><code>import torch.optim as optim
+
+model = YourModel()
+
+# SGD with momentum
+optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
+
+# Adam (default choice)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# AdamW (for Transformers)
+optimizer = optim.AdamW(model.parameters(), lr=1e-4, weight_decay=0.01)
+
+# Training loop
+for epoch in range(epochs):
+    optimizer.zero_grad()      # Clear gradients
+    output = model(input)      # Forward pass
+    loss = criterion(output, target)
+    loss.backward()            # Backward pass
+    optimizer.step()           # Update weights</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Learning Rate Schedulers</span>
+                </div>
+                <pre><code>from torch.optim.lr_scheduler import (
+    StepLR, CosineAnnealingLR, ReduceLROnPlateau
+)
+
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# Step decay: reduce LR by 0.1 every 30 epochs
+scheduler = StepLR(optimizer, step_size=30, gamma=0.1)
+
+# Cosine annealing: smooth decay (popular for vision)
+scheduler = CosineAnnealingLR(optimizer, T_max=100)
+
+# Reduce on plateau: reduce when metric stops improving
+scheduler = ReduceLROnPlateau(optimizer, patience=5, factor=0.5)
+
+# In training loop:
+for epoch in range(epochs):
+    train(...)
+    val_loss = validate(...)
+    
+    # For most schedulers:
+    scheduler.step()
+    
+    # For ReduceLROnPlateau:
+    scheduler.step(val_loss)</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Transformers/HuggingFace Optimizer Setup</span>
+                </div>
+                <pre><code>from transformers import AdamW, get_linear_schedule_with_warmup
+
+# AdamW with weight decay (exclude bias and LayerNorm)
+no_decay = ['bias', 'LayerNorm.weight']
+optimizer_params = [
+    {
+        'params': [p for n, p in model.named_parameters() 
+                   if not any(nd in n for nd in no_decay)],
+        'weight_decay': 0.01
+    },
+    {
+        'params': [p for n, p in model.named_parameters() 
+                   if any(nd in n for nd in no_decay)],
+        'weight_decay': 0.0
+    }
+]
+
+optimizer = AdamW(optimizer_params, lr=2e-5)
+
+# Linear warmup then decay
+scheduler = get_linear_schedule_with_warmup(
+    optimizer,
+    num_warmup_steps=1000,
+    num_training_steps=total_steps
+)</code></pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🎤 Interview Questions & Answers</h2>
+
+            <div class="qa-list">
+                <div class="qa-item" data-index="0">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>Why use Adam over SGD?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Adaptive learning rates:</strong> Adam adjusts LR per parameter based on
+                                gradient history</li>
+                            <li><strong>Faster convergence:</strong> Usually converges faster than SGD</li>
+                            <li><strong>Less tuning:</strong> Default hyperparameters work well</li>
+                        </ul>
+                        <p><strong>When to use SGD instead:</strong></p>
+                        <ul>
+                            <li>Final training for better generalization (SGD sometimes generalizes better)</li>
+                            <li>When you have time for extensive hyperparameter tuning</li>
+                            <li>Some research shows SGD + momentum finds flatter minima</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="1">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>What is AdamW and why is it used for Transformers?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>AdamW decouples weight decay from the gradient update. In standard Adam, weight decay is
+                            implemented incorrectly as L2 regularization added to the loss, which interacts poorly with
+                            the adaptive learning rates.</p>
+                        <p>AdamW applies weight decay directly to weights: <code>w = w - lr × (grad + wd × w)</code></p>
+                        <p><strong>Why for Transformers:</strong></p>
+                        <ul>
+                            <li>Transformers have many parameters and need proper regularization</li>
+                            <li>BERT, GPT papers use AdamW</li>
+                            <li>Combined with warmup, gives stable training</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="2">
+                    <div class="qa-question">
+                        <span class="q-icon">Q3</span>
+                        <span>What is learning rate warmup?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>Warmup gradually increases learning rate from 0 to the target value over the first few
+                            steps/epochs.</p>
+                        <p><strong>Why it helps:</strong></p>
+                        <ul>
+                            <li>Prevents large early updates when gradients are unstable</li>
+                            <li>Allows model to "settle" before aggressive updates</li>
+                            <li>Critical for Transformers and large batch training</li>
+                        </ul>
+                        <p><strong>Common pattern:</strong> Linear warmup for 5-10% of training, then cosine decay or
+                            linear decay.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="3">
+                    <div class="qa-question">
+                        <span class="q-icon">Q4</span>
+                        <span>What optimizer did you use in your projects?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer (Personalized for Ankit):</strong></p>
+                        <ul>
+                            <li><strong>YOLOv5 (Lincode):</strong> SGD with momentum (0.937) + cosine annealing. YOLO
+                                authors found SGD generalizes better for object detection.</li>
+                            <li><strong>RAG/LLM fine-tuning (Trident):</strong> AdamW with linear warmup, weight decay
+                                0.01, LR 2e-5. Standard for transformer-based models.</li>
+                            <li><strong>Quick prototyping:</strong> Adam with default parameters - fast iteration.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🧭 Optimizer Decision Guide</h2>
+            <div class="diagram-box">
+                <pre>
+        ┌─────────────────────────┐
+        │   What's your model?    │
+        └───────────┬─────────────┘
+                    │
+    ┌───────────────┼───────────────┐
+    ▼               ▼               ▼
+ Transformer     CNN/General     Quick Prototype
+    │               │               │
+    ▼               ▼               ▼
+  AdamW          SGD+Momentum     Adam
+ + warmup        or Adam         (defaults)
+                </pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🔗 Related Topics</h2>
+            <div class="related-grid">
+                <a href="topic-loss-functions.html" class="related-link">
+                    <span class="related-icon">📉</span>
+                    <span>Loss Functions</span>
+                </a>
+                <a href="topic-regularization.html" class="related-link">
+                    <span class="related-icon">🛡️</span>
+                    <span>Regularization</span>
+                </a>
+                <a href="topic-bias-variance.html" class="related-link">
+                    <span class="related-icon">⚖️</span>
+                    <span>Bias-Variance</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

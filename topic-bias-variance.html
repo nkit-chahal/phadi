@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bias-Variance Tradeoff | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <div class="topic-icon">⚖️</div>
+            <div class="topic-info">
+                <span class="topic-category">ML Fundamentals</span>
+                <h1 class="topic-title">Bias-Variance Tradeoff</h1>
+                <p class="topic-subtitle">Understanding the fundamental tradeoff in machine learning model complexity
+                </p>
+            </div>
+        </header>
+
+        <!-- Quick Summary -->
+        <section class="content-card summary-card">
+            <h2>📌 Quick Summary</h2>
+            <div class="formula-box">
+                <code>Total Error = Bias² + Variance + Irreducible Error</code>
+            </div>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">🎯</span>
+                    <div>
+                        <strong>High Bias</strong>
+                        <p>Model too simple → Underfitting → Poor on both train & test</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">📈</span>
+                    <div>
+                        <strong>High Variance</strong>
+                        <p>Model too complex → Overfitting → Great train, poor test</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">✨</span>
+                    <div>
+                        <strong>Sweet Spot</strong>
+                        <p>Balanced complexity → Good generalization → Similar train & test</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detailed Explanation -->
+        <section class="content-card">
+            <h2>📖 Detailed Explanation</h2>
+
+            <h3>What is Bias?</h3>
+            <p>Bias is the error introduced by approximating a real-world problem with a simplified model. High bias
+                means the model makes strong assumptions about the data.</p>
+            <ul>
+                <li><strong>Linear regression</strong> on non-linear data → High bias</li>
+                <li><strong>Decision stump</strong> (1-level tree) → High bias</li>
+                <li>Model "misses" the underlying pattern</li>
+            </ul>
+
+            <h3>What is Variance?</h3>
+            <p>Variance is the model's sensitivity to fluctuations in the training data. High variance means small
+                changes in training data cause large changes in the model.</p>
+            <ul>
+                <li><strong>Deep decision tree</strong> → High variance</li>
+                <li><strong>High-degree polynomial</strong> → High variance</li>
+                <li>Model "memorizes" the training data including noise</li>
+            </ul>
+
+            <h3>The Tradeoff</h3>
+            <p>As you decrease bias (make model more complex), variance typically increases, and vice versa. The goal is
+                to find the optimal balance where total error is minimized.</p>
+
+            <div class="diagram-box">
+                <pre>
+    Error
+      │
+      │  ╲         Total Error
+      │   ╲       ╱
+      │    ╲     ╱
+      │     ╲   ╱
+      │      ╲ ╱  ← Optimal Complexity
+      │       ╳
+      │      ╱ ╲
+      │     ╱   ╲
+      │    ╱     ╲
+      │  Bias²    Variance
+      │──────────────────────────▶
+              Model Complexity
+                </pre>
+            </div>
+        </section>
+
+        <!-- Code Examples -->
+        <section class="content-card">
+            <h2>💻 Code Examples</h2>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Demonstrating Bias-Variance with Polynomial Regression</span>
+                </div>
+                <pre><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import PolynomialFeatures
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import cross_val_score
+
+# Generate synthetic data
+np.random.seed(42)
+X = np.linspace(0, 1, 100).reshape(-1, 1)
+y = np.sin(2 * np.pi * X).ravel() + np.random.normal(0, 0.3, 100)
+
+# Try different polynomial degrees
+degrees = [1, 3, 10, 15]
+train_errors = []
+test_errors = []
+
+for degree in degrees:
+    poly = PolynomialFeatures(degree=degree)
+    X_poly = poly.fit_transform(X)
+    
+    model = LinearRegression()
+    
+    # Cross-validation for test error estimate
+    cv_scores = cross_val_score(model, X_poly, y, cv=5, 
+                                 scoring='neg_mean_squared_error')
+    
+    # Fit on all data for train error
+    model.fit(X_poly, y)
+    train_pred = model.predict(X_poly)
+    train_mse = np.mean((y - train_pred) ** 2)
+    
+    train_errors.append(train_mse)
+    test_errors.append(-cv_scores.mean())
+    
+    print(f"Degree {degree:2d}: Train MSE = {train_mse:.4f}, "
+          f"CV MSE = {-cv_scores.mean():.4f}")
+
+# Results:
+# Degree 1 : High Bias (underfitting)
+# Degree 3 : Good balance (optimal)
+# Degree 15: High Variance (overfitting)</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Detecting Overfitting vs Underfitting</span>
+                </div>
+                <pre><code class="language-python">def diagnose_model(train_score, val_score, threshold=0.1):
+    """
+    Diagnose if model is overfitting, underfitting, or well-fitted.
+    
+    Args:
+        train_score: Training accuracy/metric
+        val_score: Validation accuracy/metric
+        threshold: Acceptable gap between train and val
+    
+    Returns:
+        Diagnosis string
+    """
+    gap = train_score - val_score
+    
+    if train_score < 0.6:  # Assuming accuracy metric
+        return "HIGH BIAS (Underfitting): Model too simple"
+    elif gap > threshold:
+        return "HIGH VARIANCE (Overfitting): Model too complex"
+    else:
+        return "GOOD FIT: Model is well-balanced"
+
+# Example usage
+print(diagnose_model(0.55, 0.50))  # Underfitting
+print(diagnose_model(0.99, 0.75))  # Overfitting  
+print(diagnose_model(0.88, 0.85))  # Good fit</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Solutions for High Bias / High Variance</span>
+                </div>
+                <pre><code class="language-python"># === HIGH BIAS SOLUTIONS ===
+# 1. Use more complex model
+from sklearn.ensemble import RandomForestClassifier
+model = RandomForestClassifier(n_estimators=100, max_depth=None)
+
+# 2. Add polynomial features
+from sklearn.preprocessing import PolynomialFeatures
+poly = PolynomialFeatures(degree=3)
+X_poly = poly.fit_transform(X)
+
+# 3. Reduce regularization strength
+from sklearn.linear_model import Ridge
+model = Ridge(alpha=0.01)  # Lower alpha = less regularization
+
+
+# === HIGH VARIANCE SOLUTIONS ===
+# 1. Get more training data
+# 2. Add regularization
+from sklearn.linear_model import Lasso
+model = Lasso(alpha=1.0)  # L1 regularization
+
+# 3. Reduce model complexity
+model = RandomForestClassifier(max_depth=5, min_samples_leaf=10)
+
+# 4. Use dropout (for neural networks)
+from tensorflow.keras.layers import Dropout
+model.add(Dropout(0.5))
+
+# 5. Early stopping
+from tensorflow.keras.callbacks import EarlyStopping
+early_stop = EarlyStopping(patience=5, restore_best_weights=True)
+
+# 6. Data augmentation (for images)
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+datagen = ImageDataGenerator(rotation_range=20, horizontal_flip=True)</code></pre>
+            </div>
+        </section>
+
+        <!-- Interview Questions -->
+        <section class="content-card">
+            <h2>🎤 Interview Questions & Answers</h2>
+
+            <div class="qa-list">
+                <div class="qa-item" data-index="0">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>Explain the bias-variance tradeoff in simple terms.</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>The bias-variance tradeoff is the fundamental tension between two sources of error in machine
+                            learning:</p>
+                        <ul>
+                            <li><strong>Bias</strong> is like aiming at the wrong target - your model is systematically
+                                wrong because it's too simple to capture the true pattern.</li>
+                            <li><strong>Variance</strong> is like having shaky hands - your model is too sensitive and
+                                changes a lot with different training data.</li>
+                        </ul>
+                        <p>Simple models (like linear regression) have high bias but low variance. Complex models (like
+                            deep neural networks) have low bias but high variance. The goal is to find the sweet spot
+                            where total error is minimized.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="1">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>How do you know if your model is overfitting?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>Signs of overfitting (high variance):</p>
+                        <ol>
+                            <li><strong>Large gap</strong> between training accuracy (high) and validation accuracy
+                                (low)</li>
+                            <li><strong>Training loss</strong> keeps decreasing but validation loss starts increasing
+                            </li>
+                            <li>Model performs poorly on new, unseen data</li>
+                        </ol>
+                        <p><strong>Example:</strong> If train accuracy = 99% but validation accuracy = 75%, the model is
+                            memorizing training data rather than learning generalizable patterns.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="2">
+                    <div class="qa-question">
+                        <span class="q-icon">Q3</span>
+                        <span>What techniques reduce overfitting?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Regularization:</strong> L1 (Lasso), L2 (Ridge), Elastic Net</li>
+                            <li><strong>Dropout:</strong> Randomly deactivate neurons during training</li>
+                            <li><strong>Early Stopping:</strong> Stop training when validation loss increases</li>
+                            <li><strong>Data Augmentation:</strong> Artificially increase training data</li>
+                            <li><strong>Cross-Validation:</strong> Better estimate of generalization error</li>
+                            <li><strong>Reduce Model Complexity:</strong> Fewer layers, smaller trees</li>
+                            <li><strong>Ensemble Methods:</strong> Bagging reduces variance</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="3">
+                    <div class="qa-question">
+                        <span class="q-icon">Q4</span>
+                        <span>How does the bias-variance tradeoff apply to ensemble methods?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Bagging (Random Forest):</strong> Reduces variance by averaging multiple
+                                high-variance models. Each tree overfits differently, averaging cancels out the noise.
+                            </li>
+                            <li><strong>Boosting (XGBoost, AdaBoost):</strong> Reduces bias by sequentially building
+                                models that focus on errors of previous models. Starts simple and adds complexity.</li>
+                        </ul>
+                        <p>This is why Random Forest works well with deep trees (high variance individuals) while
+                            Boosting starts with shallow trees (high bias individuals).</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="4">
+                    <div class="qa-question">
+                        <span class="q-icon">Q5</span>
+                        <span>In your defect detection project, how did you handle bias-variance?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer (Personalized for Ankit):</strong></p>
+                        <p>In my YOLOv5 defect detection system at Lincode:</p>
+                        <ul>
+                            <li><strong>Initial problem:</strong> Small dataset → high variance (overfitting)</li>
+                            <li><strong>Solutions applied:</strong>
+                                <ul>
+                                    <li>Data augmentation (rotation, flip, brightness)</li>
+                                    <li>Transfer learning from COCO pretrained weights</li>
+                                    <li>Early stopping based on validation mAP</li>
+                                    <li>Regularization through weight decay</li>
+                                </ul>
+                            </li>
+                            <li><strong>Result:</strong> Achieved 0.95 mAP with good generalization to new defect types
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practice Problems -->
+        <section class="content-card">
+            <h2>✍️ Practice Problems</h2>
+
+            <div class="practice-problems">
+                <div class="practice-item">
+                    <div class="practice-header">
+                        <span class="practice-num">1</span>
+                        <span class="practice-title">Scenario Analysis</span>
+                    </div>
+                    <p>A model has 95% training accuracy and 60% validation accuracy. Diagnose the problem and suggest 3
+                        solutions.</p>
+                    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+                    <div class="solution hidden">
+                        <p><strong>Diagnosis:</strong> High Variance (Overfitting) - Large gap between train and val
+                            accuracy.</p>
+                        <p><strong>Solutions:</strong></p>
+                        <ol>
+                            <li>Add regularization (L2/dropout)</li>
+                            <li>Get more training data or use data augmentation</li>
+                            <li>Reduce model complexity (fewer layers/features)</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="practice-item">
+                    <div class="practice-header">
+                        <span class="practice-num">2</span>
+                        <span class="practice-title">Write the Code</span>
+                    </div>
+                    <p>Write a function that plots learning curves to diagnose bias/variance.</p>
+                    <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+                    <div class="solution hidden">
+                        <pre><code>from sklearn.model_selection import learning_curve
+import matplotlib.pyplot as plt
+
+def plot_learning_curve(model, X, y):
+    train_sizes, train_scores, val_scores = learning_curve(
+        model, X, y, cv=5, 
+        train_sizes=np.linspace(0.1, 1.0, 10),
+        scoring='accuracy'
+    )
+    
+    train_mean = np.mean(train_scores, axis=1)
+    val_mean = np.mean(val_scores, axis=1)
+    
+    plt.plot(train_sizes, train_mean, label='Training')
+    plt.plot(train_sizes, val_mean, label='Validation')
+    plt.xlabel('Training Size')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    plt.title('Learning Curve')
+    plt.show()
+    
+    # Interpretation:
+    # - Both low & close → High Bias
+    # - Large gap → High Variance
+    # - Both high & close → Good Fit</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Related Topics -->
+        <section class="content-card">
+            <h2>🔗 Related Topics</h2>
+            <div class="related-grid">
+                <a href="topic-regularization.html" class="related-link">
+                    <span class="related-icon">🛡️</span>
+                    <span>Regularization (L1/L2)</span>
+                </a>
+                <a href="topic-cross-validation.html" class="related-link">
+                    <span class="related-icon">✂️</span>
+                    <span>Cross-Validation</span>
+                </a>
+                <a href="topic-overfitting.html" class="related-link">
+                    <span class="related-icon">📈</span>
+                    <span>Handling Overfitting</span>
+                </a>
+                <a href="topic-ensemble.html" class="related-link">
+                    <span class="related-icon">🌲</span>
+                    <span>Ensemble Methods</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Mark Complete -->
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

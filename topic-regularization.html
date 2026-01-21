@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regularization | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">🛡️</div>
+            <div class="topic-info">
+                <span class="topic-category">ML Fundamentals</span>
+                <h1 class="topic-title">Regularization</h1>
+                <p class="topic-subtitle">Techniques to prevent overfitting and improve generalization</p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 Quick Summary</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">📐</span>
+                    <div>
+                        <strong>L1 (Lasso)</strong>
+                        <p>Sparse weights → Feature selection. Some weights become exactly 0.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">📏</span>
+                    <div>
+                        <strong>L2 (Ridge)</strong>
+                        <p>Small weights → Prevents any feature from dominating. All weights shrink.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🎲</span>
+                    <div>
+                        <strong>Dropout</strong>
+                        <p>Random neuron deactivation → Ensemble effect in neural networks.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>📖 Regularization Techniques</h2>
+
+            <h3>L1 Regularization (Lasso)</h3>
+            <div class="formula-box">
+                <code>Loss = Original Loss + λ × Σ|wᵢ|</code>
+            </div>
+            <ul>
+                <li><strong>Effect:</strong> Drives some weights to exactly zero</li>
+                <li><strong>Use case:</strong> Feature selection, sparse models</li>
+                <li><strong>When:</strong> You suspect many features are irrelevant</li>
+            </ul>
+
+            <h3>L2 Regularization (Ridge / Weight Decay)</h3>
+            <div class="formula-box">
+                <code>Loss = Original Loss + λ × Σwᵢ²</code>
+            </div>
+            <ul>
+                <li><strong>Effect:</strong> Shrinks all weights toward zero (but not exactly zero)</li>
+                <li><strong>Use case:</strong> General regularization, prevent overfitting</li>
+                <li><strong>When:</strong> Default choice for most ML problems</li>
+            </ul>
+
+            <h3>Elastic Net</h3>
+            <div class="formula-box">
+                <code>Loss = Original Loss + λ₁×Σ|wᵢ| + λ₂×Σwᵢ²</code>
+            </div>
+            <ul>
+                <li>Combines L1 and L2</li>
+                <li>Useful when features are correlated</li>
+            </ul>
+
+            <h3>Dropout</h3>
+            <ul>
+                <li>Randomly sets neurons to 0 during training (typically p=0.5)</li>
+                <li>At inference: all neurons active, weights scaled by (1-p)</li>
+                <li><strong>Why it works:</strong> Prevents co-adaptation, creates ensemble effect</li>
+            </ul>
+
+            <h3>Early Stopping</h3>
+            <ul>
+                <li>Stop training when validation loss stops improving</li>
+                <li>Simple but effective</li>
+                <li>Use patience parameter to avoid stopping too early</li>
+            </ul>
+
+            <h3>Data Augmentation</h3>
+            <ul>
+                <li>Artificially expand training data</li>
+                <li><strong>Images:</strong> Rotation, flip, crop, color jitter</li>
+                <li><strong>Text:</strong> Synonym replacement, back-translation</li>
+            </ul>
+
+            <h3>Batch Normalization</h3>
+            <ul>
+                <li>Normalizes layer inputs → Has regularization effect</li>
+                <li>Often allows reducing or removing dropout</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>💻 Code Examples</h2>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">L1 and L2 in Scikit-learn</span>
+                </div>
+                <pre><code>from sklearn.linear_model import Lasso, Ridge, ElasticNet
+
+# L1 Regularization (Lasso)
+lasso = Lasso(alpha=0.1)  # alpha is regularization strength
+lasso.fit(X_train, y_train)
+print(f"Non-zero features: {sum(lasso.coef_ != 0)}")  # Sparse!
+
+# L2 Regularization (Ridge)
+ridge = Ridge(alpha=1.0)
+ridge.fit(X_train, y_train)
+print(f"Max weight: {max(abs(ridge.coef_))}")  # All weights small
+
+# Elastic Net (L1 + L2)
+elastic = ElasticNet(alpha=0.1, l1_ratio=0.5)  # 50% L1, 50% L2
+elastic.fit(X_train, y_train)</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Dropout in PyTorch</span>
+                </div>
+                <pre><code>import torch.nn as nn
+
+class Net(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.fc1 = nn.Linear(784, 256)
+        self.dropout1 = nn.Dropout(0.5)  # 50% dropout
+        self.fc2 = nn.Linear(256, 128)
+        self.dropout2 = nn.Dropout(0.3)  # 30% dropout
+        self.fc3 = nn.Linear(128, 10)
+    
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = self.dropout1(x)  # Only active during training
+        x = F.relu(self.fc2(x))
+        x = self.dropout2(x)
+        x = self.fc3(x)
+        return x
+
+# During training: model.train() activates dropout
+# During eval: model.eval() deactivates dropout</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Early Stopping in Keras</span>
+                </div>
+                <pre><code>from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+
+# Early stopping: stop when val_loss stops improving
+early_stop = EarlyStopping(
+    monitor='val_loss',
+    patience=5,              # Wait 5 epochs before stopping
+    restore_best_weights=True  # Restore best model
+)
+
+# Save best model
+checkpoint = ModelCheckpoint(
+    'best_model.h5',
+    monitor='val_loss',
+    save_best_only=True
+)
+
+model.fit(
+    X_train, y_train,
+    validation_data=(X_val, y_val),
+    epochs=100,  # Set high, early stopping will stop earlier
+    callbacks=[early_stop, checkpoint]
+)</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">L2 Regularization (Weight Decay) in PyTorch</span>
+                </div>
+                <pre><code>import torch.optim as optim
+
+# Method 1: Weight decay in optimizer
+optimizer = optim.Adam(model.parameters(), lr=0.001, weight_decay=1e-4)
+
+# Method 2: Manual L2 loss (more control)
+def train_step(model, data, target, optimizer, l2_lambda=0.01):
+    optimizer.zero_grad()
+    output = model(data)
+    
+    # Original loss
+    loss = F.cross_entropy(output, target)
+    
+    # Add L2 penalty
+    l2_reg = torch.tensor(0.)
+    for param in model.parameters():
+        l2_reg += torch.norm(param, 2)
+    
+    total_loss = loss + l2_lambda * l2_reg
+    total_loss.backward()
+    optimizer.step()
+    
+    return total_loss.item()</code></pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🎤 Interview Questions & Answers</h2>
+
+            <div class="qa-list">
+                <div class="qa-item" data-index="0">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>What's the difference between L1 and L2 regularization?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>L1 (Lasso):</strong> Adds |w| to loss → Creates sparse weights (some become
+                                exactly 0) → Good for feature selection</li>
+                            <li><strong>L2 (Ridge):</strong> Adds w² to loss → Shrinks all weights toward 0 (but not
+                                exactly 0) → Good for general regularization</li>
+                        </ul>
+                        <p><strong>Geometric intuition:</strong> L1 constraint region is a diamond (corners at axes), L2
+                            is a circle. Optimal solution more likely to hit L1 corners (sparse).</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="1">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>How does Dropout prevent overfitting?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Prevents co-adaptation:</strong> Neurons can't rely on specific other neurons
+                            </li>
+                            <li><strong>Ensemble effect:</strong> Training many "thinned" networks, averaging at test
+                                time</li>
+                            <li><strong>Adds noise:</strong> Similar to data augmentation for weights</li>
+                        </ul>
+                        <p><strong>Key detail:</strong> At test time, dropout is OFF but weights are scaled by (1-p) to
+                            maintain expected output magnitude.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="2">
+                    <div class="qa-question">
+                        <span class="q-icon">Q3</span>
+                        <span>When would you choose Early Stopping over other regularization?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>Early stopping is great when:</p>
+                        <ul>
+                            <li>You have limited compute and can't afford full hyperparameter search</li>
+                            <li>Combined with other regularization techniques</li>
+                            <li>You want a simple, effective baseline</li>
+                        </ul>
+                        <p><strong>Drawback:</strong> You might stop before reaching a good solution if training curve
+                            is noisy. Use patience parameter to mitigate.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="3">
+                    <div class="qa-question">
+                        <span class="q-icon">Q4</span>
+                        <span>How did you handle regularization in your projects?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer (Personalized for Ankit):</strong></p>
+                        <p>In my YOLOv5 defect detection at Lincode:</p>
+                        <ul>
+                            <li><strong>Weight decay:</strong> 0.0005 (standard for YOLO)</li>
+                            <li><strong>Data augmentation:</strong> Mosaic, mixup, HSV augmentation</li>
+                            <li><strong>Early stopping:</strong> Based on mAP@0.5, patience=50 epochs</li>
+                        </ul>
+                        <p>Combined these techniques addressed the small dataset issue (high variance). Final model
+                            generalized well to new defect types.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🔗 Related Topics</h2>
+            <div class="related-grid">
+                <a href="topic-bias-variance.html" class="related-link">
+                    <span class="related-icon">⚖️</span>
+                    <span>Bias-Variance Tradeoff</span>
+                </a>
+                <a href="topic-optimizers.html" class="related-link">
+                    <span class="related-icon">🔄</span>
+                    <span>Optimizers</span>
+                </a>
+                <a href="topic-imbalanced-data.html" class="related-link">
+                    <span class="related-icon">⚖️</span>
+                    <span>Imbalanced Data</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

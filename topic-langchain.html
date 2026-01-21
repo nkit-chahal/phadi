@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LangChain | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">🔗</div>
+            <div class="topic-info">
+                <span class="topic-category">GenAI & LLMs</span>
+                <h1 class="topic-title">LangChain</h1>
+                <p class="topic-subtitle">Framework for building LLM applications</p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 Core Components</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">⛓️</span>
+                    <div>
+                        <strong>Chains</strong>
+                        <p>Sequential operations: prompt → LLM → output parser</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🤖</span>
+                    <div>
+                        <strong>Agents</strong>
+                        <p>Dynamic tool selection based on LLM reasoning</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">💾</span>
+                    <div>
+                        <strong>Memory</strong>
+                        <p>Conversation history for multi-turn interactions</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>📖 Key Concepts</h2>
+
+            <h3>1. Chains</h3>
+            <p>Combining components into a sequence:</p>
+            <ul>
+                <li><strong>LLMChain:</strong> Prompt template → LLM → Output</li>
+                <li><strong>SequentialChain:</strong> Chain multiple LLMChains together</li>
+                <li><strong>RetrievalQA:</strong> Retriever → Context → LLM → Answer</li>
+                <li><strong>LCEL (Expression Language):</strong> Modern way to compose chains with | operator</li>
+            </ul>
+
+            <h3>2. Agents</h3>
+            <p>LLM decides which tools to use dynamically:</p>
+            <ul>
+                <li><strong>ReAct Agent:</strong> Reason + Act pattern</li>
+                <li><strong>Tools:</strong> Functions the agent can call (search, calculator, API)</li>
+                <li><strong>Use case:</strong> When you don't know which tool is needed ahead of time</li>
+            </ul>
+
+            <h3>3. Memory</h3>
+            <p>Maintaining conversation context:</p>
+            <ul>
+                <li><strong>ConversationBufferMemory:</strong> Store all messages</li>
+                <li><strong>ConversationSummaryMemory:</strong> Summarize old messages</li>
+                <li><strong>ConversationBufferWindowMemory:</strong> Keep last K messages</li>
+            </ul>
+
+            <h3>4. Output Parsers</h3>
+            <p>Extract structured data from LLM output:</p>
+            <ul>
+                <li><strong>StrOutputParser:</strong> Plain text</li>
+                <li><strong>JsonOutputParser:</strong> Parse JSON</li>
+                <li><strong>PydanticOutputParser:</strong> Validate with Pydantic models</li>
+            </ul>
+
+            <h3>5. Retrievers</h3>
+            <ul>
+                <li><strong>VectorStoreRetriever:</strong> Similarity search from vector DB</li>
+                <li><strong>BM25Retriever:</strong> Keyword-based retrieval</li>
+                <li><strong>EnsembleRetriever:</strong> Combine multiple retrievers</li>
+                <li><strong>ContextualCompressionRetriever:</strong> Compress retrieved docs</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>💻 Code Examples</h2>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Modern LangChain with LCEL</span>
+                </div>
+                <pre><code>from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+
+# Initialize LLM
+llm = ChatOpenAI(model="gpt-4", temperature=0)
+
+# Create prompt template
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a helpful assistant for {domain} questions."),
+    ("user", "{question}")
+])
+
+# Create chain using LCEL (pipe operator)
+chain = prompt | llm | StrOutputParser()
+
+# Run chain
+response = chain.invoke({
+    "domain": "machine maintenance",
+    "question": "How to prevent motor overheating?"
+})
+
+print(response)</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">RAG Chain with LangChain</span>
+                </div>
+                <pre><code>from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_community.vectorstores import Chroma
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import RunnablePassthrough
+from langchain_core.output_parsers import StrOutputParser
+
+# Setup
+llm = ChatOpenAI(model="gpt-4", temperature=0)
+embeddings = OpenAIEmbeddings()
+vectorstore = Chroma(persist_directory="./chroma_db", embedding_function=embeddings)
+retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
+
+# Format retrieved docs
+def format_docs(docs):
+    return "\n\n".join(doc.page_content for doc in docs)
+
+# RAG prompt
+prompt = ChatPromptTemplate.from_template("""
+Answer based only on the following context:
+{context}
+
+Question: {question}
+
+If the answer is not in the context, say "I don't have information about this."
+""")
+
+# RAG chain using LCEL
+rag_chain = (
+    {"context": retriever | format_docs, "question": RunnablePassthrough()}
+    | prompt
+    | llm
+    | StrOutputParser()
+)
+
+# Query
+response = rag_chain.invoke("How to calibrate the pressure sensor?")
+print(response)</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Agent with Tools</span>
+                </div>
+                <pre><code>from langchain_openai import ChatOpenAI
+from langchain.agents import create_openai_functions_agent, AgentExecutor
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain.tools import tool
+
+# Define custom tools
+@tool
+def search_knowledge_base(query: str) -> str:
+    """Search the maintenance knowledge base for relevant information."""
+    # Your retrieval logic here
+    docs = retriever.get_relevant_documents(query)
+    return "\n".join([doc.page_content for doc in docs[:3]])
+
+@tool
+def get_machine_status(machine_id: str) -> str:
+    """Get current status and recent alerts for a machine."""
+    # Mock implementation
+    return f"Machine {machine_id}: Running, Temp: 65°C, Last maintenance: 7 days ago"
+
+tools = [search_knowledge_base, get_machine_status]
+
+# Create agent
+llm = ChatOpenAI(model="gpt-4", temperature=0)
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a maintenance assistant. Use tools to help answer questions."),
+    ("user", "{input}"),
+    MessagesPlaceholder(variable_name="agent_scratchpad"),
+])
+
+agent = create_openai_functions_agent(llm, tools, prompt)
+agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+
+# Run agent
+result = agent_executor.invoke({
+    "input": "Check status of CNC-01 and any recent issues with that machine type"
+})</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Conversation Memory</span>
+                </div>
+                <pre><code>from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_community.chat_message_histories import ChatMessageHistory
+from langchain_core.runnables.history import RunnableWithMessageHistory
+
+llm = ChatOpenAI(model="gpt-4")
+
+prompt = ChatPromptTemplate.from_messages([
+    ("system", "You are a helpful maintenance assistant."),
+    MessagesPlaceholder(variable_name="history"),
+    ("user", "{input}")
+])
+
+chain = prompt | llm
+
+# Store for conversation histories
+store = {}
+
+def get_session_history(session_id: str):
+    if session_id not in store:
+        store[session_id] = ChatMessageHistory()
+    return store[session_id]
+
+# Chain with memory
+chain_with_history = RunnableWithMessageHistory(
+    chain,
+    get_session_history,
+    input_messages_key="input",
+    history_messages_key="history"
+)
+
+# Multi-turn conversation
+config = {"configurable": {"session_id": "user123"}}
+
+response1 = chain_with_history.invoke(
+    {"input": "My motor is overheating"},
+    config=config
+)
+print(response1.content)
+
+response2 = chain_with_history.invoke(
+    {"input": "What could be causing it?"},  # Knows context!
+    config=config
+)
+print(response2.content)</code></pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🎤 Interview Questions & Answers</h2>
+
+            <div class="qa-list">
+                <div class="qa-item" data-index="0">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>What are LangChain Chains and when to use them?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>Chains are sequences of operations that process input through multiple steps.</p>
+                        <p><strong>Use cases:</strong></p>
+                        <ul>
+                            <li><strong>Simple chain:</strong> Prompt → LLM → Parse (most common)</li>
+                            <li><strong>RAG chain:</strong> Query → Retrieve → Format → LLM → Answer</li>
+                            <li><strong>Sequential:</strong> Chain 1 output → Chain 2 input</li>
+                        </ul>
+                        <p><strong>LCEL (recommended):</strong> Modern syntax using | operator for composability and
+                            streaming support.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="1">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>When to use Agents vs Chains?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p><strong>Use Chains when:</strong></p>
+                        <ul>
+                            <li>Steps are predictable and fixed</li>
+                            <li>You know which tools/operations are needed</li>
+                            <li>Performance and latency are critical</li>
+                        </ul>
+                        <p><strong>Use Agents when:</strong></p>
+                        <ul>
+                            <li>Task requires dynamic tool selection</li>
+                            <li>Multi-step reasoning with unknown steps</li>
+                            <li>User queries are open-ended</li>
+                        </ul>
+                        <p><strong>Trade-off:</strong> Agents are flexible but slower and harder to debug.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="2">
+                    <div class="qa-question">
+                        <span class="q-icon">Q3</span>
+                        <span>How do you handle conversation memory?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Buffer:</strong> Store all messages (simple, but grows unbounded)</li>
+                            <li><strong>Window:</strong> Keep last K messages (bounded, loses old context)</li>
+                            <li><strong>Summary:</strong> Summarize old messages (compact, but lossy)</li>
+                            <li><strong>Vector:</strong> Store in vector DB, retrieve relevant history</li>
+                        </ul>
+                        <p><strong>Production tip:</strong> Use session IDs to separate conversations, persist to
+                            database for reliability.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="3">
+                    <div class="qa-question">
+                        <span class="q-icon">Q4</span>
+                        <span>How did you use LangChain in your projects?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer (Your Project):</strong></p>
+                        <p>In the Trident breakdown intelligence system:</p>
+                        <ul>
+                            <li><strong>Document loading:</strong> PyPDFLoader for maintenance manuals</li>
+                            <li><strong>Text splitting:</strong> RecursiveCharacterTextSplitter (1000 tokens, 200
+                                overlap)</li>
+                            <li><strong>Vector store:</strong> Chroma integration for embeddings</li>
+                            <li><strong>RAG chain:</strong> RetrievalQA with custom prompt template</li>
+                            <li><strong>Output parsing:</strong> PydanticOutputParser for structured JSON responses</li>
+                        </ul>
+                        <p>LangChain accelerated development - went from idea to POC in 2 weeks.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🔗 Related Topics</h2>
+            <div class="related-grid">
+                <a href="topic-rag-architecture.html" class="related-link">
+                    <span class="related-icon">🔍</span>
+                    <span>RAG Architecture</span>
+                </a>
+                <a href="topic-vector-databases.html" class="related-link">
+                    <span class="related-icon">💾</span>
+                    <span>Vector Databases</span>
+                </a>
+                <a href="topic-prompt-engineering.html" class="related-link">
+                    <span class="related-icon">✍️</span>
+                    <span>Prompt Engineering</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

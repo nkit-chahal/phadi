@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Infrastructure | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">📊</div>
+            <div class="topic-info">
+                <span class="topic-category">ML System Design</span>
+                <h1 class="topic-title">Data Infrastructure</h1>
+                <p class="topic-subtitle">Scalable data systems for ML workloads</p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 Data Infrastructure Stack</h2>
+            <div class="diagram-box">
+                <pre>
+┌─────────────────────────────────────────────────────────────┐
+│  Sources: Apps, IoT, Logs, Databases, APIs                  │
+├─────────────────────────────────────────────────────────────┤
+│  Ingestion: Kafka, Kinesis, Pub/Sub (streaming)             │
+│             Airflow, dbt (batch)                            │
+├─────────────────────────────────────────────────────────────┤
+│  Storage: Data Lake (S3, GCS) ←→ Data Warehouse (BQ, Redshift)│
+├─────────────────────────────────────────────────────────────┤
+│  Feature Store: Feast, Tecton (offline + online)            │
+├─────────────────────────────────────────────────────────────┤
+│  ML Training ←── Features ──→ ML Serving                    │
+└─────────────────────────────────────────────────────────────┘
+                </pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>📖 Core Components</h2>
+
+            <h3>1. Data Lake vs Data Warehouse</h3>
+            <ul>
+                <li><strong>Data Lake:</strong> Raw data, schema-on-read, cheap storage (S3, GCS)</li>
+                <li><strong>Data Warehouse:</strong> Structured, optimized for queries (BigQuery, Snowflake)</li>
+                <li><strong>Lakehouse:</strong> Combines both (Delta Lake, Iceberg)</li>
+            </ul>
+
+            <h3>2. Stream Processing</h3>
+            <ul>
+                <li><strong>Kafka:</strong> Message queue, high throughput</li>
+                <li><strong>Flink/Spark Streaming:</strong> Real-time processing</li>
+                <li><strong>Use cases:</strong> Real-time features, event-driven ML</li>
+            </ul>
+
+            <h3>3. Feature Store</h3>
+            <ul>
+                <li><strong>Offline store:</strong> Historical features for training (Hive, BigQuery)</li>
+                <li><strong>Online store:</strong> Low-latency for serving (Redis, DynamoDB)</li>
+                <li><strong>Point-in-time joins:</strong> Prevent feature leakage</li>
+                <li><strong>Tools:</strong> Feast, Tecton, Vertex AI Feature Store</li>
+            </ul>
+
+            <h3>4. Data Quality</h3>
+            <ul>
+                <li><strong>Schema validation:</strong> Expected types, columns</li>
+                <li><strong>Statistical checks:</strong> Distributions, null rates</li>
+                <li><strong>Tools:</strong> Great Expectations, dbt tests, Monte Carlo</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>💻 Code Examples</h2>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Feast Feature Store</span>
+                </div>
+                <pre><code>from feast import FeatureStore, Entity, Feature, FeatureView
+from feast import FileSource
+
+# Define entity
+user = Entity(
+    name="user_id",
+    description="User identifier"
+)
+
+# Define feature source
+user_features_source = FileSource(
+    path="data/user_features.parquet",
+    timestamp_field="event_timestamp"
+)
+
+# Define feature view
+user_features = FeatureView(
+    name="user_features",
+    entities=["user_id"],
+    features=[
+        Feature(name="age", dtype=Float32),
+        Feature(name="total_purchases", dtype=Int64),
+        Feature(name="avg_order_value", dtype=Float32),
+    ],
+    source=user_features_source,
+    ttl=timedelta(days=1)
+)
+
+# Initialize store
+store = FeatureStore(repo_path=".")
+
+# Get historical features for training
+training_df = store.get_historical_features(
+    entity_df=entity_df,  # user_id + timestamp
+    features=["user_features:age", "user_features:total_purchases"]
+).to_df()
+
+# Get online features for serving
+online_features = store.get_online_features(
+    features=["user_features:age", "user_features:total_purchases"],
+    entity_rows=[{"user_id": 123}]
+).to_dict()</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Data Quality with Great Expectations</span>
+                </div>
+                <pre><code>import great_expectations as ge
+
+# Load data
+df = ge.read_csv("training_data.csv")
+
+# Define expectations
+df.expect_column_to_exist("user_id")
+df.expect_column_values_to_not_be_null("user_id")
+df.expect_column_values_to_be_between("age", min_value=0, max_value=120)
+df.expect_column_values_to_be_in_set("gender", ["M", "F", "Other"])
+df.expect_column_mean_to_be_between("purchase_amount", min_value=10, max_value=1000)
+
+# Validate
+results = df.validate()
+
+if not results["success"]:
+    print("Data quality check failed!")
+    for result in results["results"]:
+        if not result["success"]:
+            print(f"  Failed: {result['expectation_config']['expectation_type']}")
+else:
+    print("All data quality checks passed!")</code></pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🎤 Interview Questions & Answers</h2>
+
+            <div class="qa-list">
+                <div class="qa-item" data-index="0">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>What is a feature store and why use one?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>A centralized repository for ML features with:</p>
+                        <ul>
+                            <li><strong>Consistency:</strong> Same features in training and serving</li>
+                            <li><strong>Reusability:</strong> Share features across teams</li>
+                            <li><strong>Point-in-time correctness:</strong> Prevents data leakage</li>
+                            <li><strong>Low latency serving:</strong> Online store for real-time</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="1">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>How do you handle data quality in ML?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Schema validation:</strong> Check types, required columns</li>
+                            <li><strong>Statistical tests:</strong> Distribution shifts, null rates</li>
+                            <li><strong>Automated alerts:</strong> Trigger on anomalies</li>
+                            <li><strong>Training gates:</strong> Block training if data fails checks</li>
+                            <li><strong>Tools:</strong> Great Expectations, dbt tests</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="2">
+                    <div class="qa-question">
+                        <span class="q-icon">Q3</span>
+                        <span>Describe your data infrastructure experience.</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer (Your Projects):</strong></p>
+                        <ul>
+                            <li><strong>AgriWatch:</strong> Satellite data pipeline - S3 storage, Airflow ETL, parquet
+                                files for training</li>
+                            <li><strong>Lincode:</strong> Image pipeline - camera → S3 → labeling tool → training
+                                dataset</li>
+                            <li><strong>Trident:</strong> Document ingestion - breakdown reports → preprocessing →
+                                ChromaDB</li>
+                        </ul>
+                        <p>Key focus: data validation before training, version control for datasets.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🔗 Related Topics</h2>
+            <div class="related-grid">
+                <a href="topic-ml-pipeline.html" class="related-link">
+                    <span class="related-icon">🔄</span>
+                    <span>ML Pipeline</span>
+                </a>
+                <a href="topic-ml-design-framework.html" class="related-link">
+                    <span class="related-icon">🎯</span>
+                    <span>ML Design Framework</span>
+                </a>
+                <a href="topic-feature-engineering.html" class="related-link">
+                    <span class="related-icon">🔧</span>
+                    <span>Feature Engineering</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

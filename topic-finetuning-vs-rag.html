@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fine-tuning vs RAG | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">⚡</div>
+            <div class="topic-info">
+                <span class="topic-category">GenAI & LLMs</span>
+                <h1 class="topic-title">Fine-tuning vs RAG</h1>
+                <p class="topic-subtitle">Choosing the right approach for your LLM application</p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 Quick Decision Guide</h2>
+            <div class="diagram-box">
+                <pre>
+┌─────────────────────────────────────────────────────────────┐
+│                    CHOOSE RAG WHEN:                          │
+│  ✓ Knowledge changes frequently                              │
+│  ✓ Need to cite sources                                     │
+│  ✓ Limited training data                                    │
+│  ✓ Want quick iteration                                     │
+│  ✓ Cost-sensitive (no GPU training)                         │
+├─────────────────────────────────────────────────────────────┤
+│                  CHOOSE FINE-TUNING WHEN:                    │
+│  ✓ Need specific output style/format                         │
+│  ✓ Domain-specific terminology or behavior                   │
+│  ✓ Knowledge is static                                       │
+│  ✓ Have lots of training examples                            │
+│  ✓ Latency-critical (no retrieval step)                      │
+├─────────────────────────────────────────────────────────────┤
+│                    OFTEN BEST: COMBINE BOTH                   │
+│  Fine-tuned model + RAG for domain style + current knowledge │
+└─────────────────────────────────────────────────────────────┘
+                </pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>📖 Detailed Comparison</h2>
+
+            <h3>RAG (Retrieval-Augmented Generation)</h3>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">✅</span>
+                    <div>
+                        <strong>Advantages</strong>
+                        <ul>
+                            <li>No training required - just index documents</li>
+                            <li>Easy to update - add/remove documents anytime</li>
+                            <li>Transparent - can cite exact sources</li>
+                            <li>Reduces hallucination - grounded in real docs</li>
+                            <li>Cost-effective - use off-the-shelf LLM</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">❌</span>
+                    <div>
+                        <strong>Limitations</strong>
+                        <ul>
+                            <li>Retrieval quality can limit accuracy</li>
+                            <li>Added latency from retrieval step</li>
+                            <li>Context length limits what can be retrieved</li>
+                            <li>Doesn't change model behavior/style</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Fine-tuning</h3>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">✅</span>
+                    <div>
+                        <strong>Advantages</strong>
+                        <ul>
+                            <li>Learns specific output format/style</li>
+                            <li>Faster inference (no retrieval)</li>
+                            <li>Can learn domain terminology</li>
+                            <li>Works for subjective tasks (tone, creativity)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">❌</span>
+                    <div>
+                        <strong>Limitations</strong>
+                        <ul>
+                            <li>Requires training data and compute</li>
+                            <li>Hard to update - retrain for new info</li>
+                            <li>Can increase hallucination if overfitted</li>
+                            <li>More expensive and time-consuming</li>
+                            <li>Knowledge cutoff remains</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>📊 Comparison Table</h2>
+            <div class="diagram-box">
+                <pre>
+| Aspect           | RAG                    | Fine-tuning            |
+|------------------|------------------------|------------------------|
+| Setup time       | Hours                  | Days-Weeks             |
+| Update knowledge | Add documents          | Retrain                |
+| Cost             | Low (inference only)   | High (training+infer)  |
+| Latency          | Higher (retrieval)     | Lower (direct)         |
+| Hallucination    | Lower (grounded)       | Higher risk            |
+| Output style     | Uses base model style  | Customizable           |
+| Transparency     | Can cite sources       | Black box              |
+| Data needed      | Documents              | Training examples      |
+                </pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>💻 Code Examples</h2>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Fine-tuning with OpenAI</span>
+                </div>
+                <pre><code>import openai
+import json
+
+# 1. Prepare training data in JSONL format
+training_data = [
+    {
+        "messages": [
+            {"role": "system", "content": "You are a maintenance assistant."},
+            {"role": "user", "content": "Motor is overheating"},
+            {"role": "assistant", "content": "**Issue:** Motor overheating\n**Likely cause:** Bearing wear or cooling fan failure\n**Action:** Check cooling fan operation, inspect bearings"}
+        ]
+    },
+    # ... more examples (need 10-100+ for good results)
+]
+
+# Save as JSONL
+with open("training_data.jsonl", "w") as f:
+    for example in training_data:
+        f.write(json.dumps(example) + "\n")
+
+# 2. Upload file
+file = openai.files.create(
+    file=open("training_data.jsonl", "rb"),
+    purpose="fine-tune"
+)
+
+# 3. Create fine-tuning job
+job = openai.fine_tuning.jobs.create(
+    training_file=file.id,
+    model="gpt-3.5-turbo",  # Base model
+    hyperparameters={
+        "n_epochs": 3
+    }
+)
+
+# 4. Use fine-tuned model
+response = openai.chat.completions.create(
+    model="ft:gpt-3.5-turbo:my-org::abc123",  # Fine-tuned model ID
+    messages=[
+        {"role": "user", "content": "Conveyor belt slipping"}
+    ]
+)</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Combining Fine-tuning + RAG</span>
+                </div>
+                <pre><code># Best of both worlds:
+# - Fine-tuned model for domain style and format
+# - RAG for current, citable knowledge
+
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+
+# Use fine-tuned model for generation
+fine_tuned_llm = ChatOpenAI(
+    model="ft:gpt-3.5-turbo:my-org::abc123",  # Your fine-tuned model
+    temperature=0
+)
+
+# RAG retriever (same as before)
+retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
+
+# Prompt template
+prompt = ChatPromptTemplate.from_template("""
+Use the following context to answer the question.
+Follow the standard response format you were trained on.
+
+Context:
+{context}
+
+Question: {question}
+
+Provide a structured response with Issue, Cause, and Action.
+""")
+
+# Combine
+rag_chain = (
+    {"context": retriever | format_docs, "question": RunnablePassthrough()}
+    | prompt
+    | fine_tuned_llm  # Fine-tuned for style
+    | StrOutputParser()
+)
+
+# Benefits:
+# - Consistent output format (from fine-tuning)
+# - Current knowledge (from RAG)
+# - Can cite sources (from RAG)
+# - Domain terminology (from fine-tuning)</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">LoRA Fine-tuning (Parameter Efficient)</span>
+                </div>
+                <pre><code>from peft import LoraConfig, get_peft_model, TaskType
+from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
+from trl import SFTTrainer
+
+# Load base model
+model = AutoModelForCausalLM.from_pretrained(
+    "meta-llama/Llama-2-7b-hf",
+    torch_dtype=torch.float16,
+    device_map="auto"
+)
+tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-2-7b-hf")
+
+# LoRA config - only train small adapter layers
+lora_config = LoraConfig(
+    r=16,                # Rank of the update matrices
+    lora_alpha=32,       # Scaling factor
+    target_modules=["q_proj", "v_proj"],  # Which layers to adapt
+    lora_dropout=0.05,
+    task_type=TaskType.CAUSAL_LM
+)
+
+# Apply LoRA
+model = get_peft_model(model, lora_config)
+print(f"Trainable params: {model.print_trainable_parameters()}")
+# Output: trainable params: 4M (0.1% of 7B total)
+
+# Training
+trainer = SFTTrainer(
+    model=model,
+    train_dataset=dataset,
+    args=TrainingArguments(
+        output_dir="./lora_model",
+        per_device_train_batch_size=4,
+        num_train_epochs=3
+    )
+)
+
+trainer.train()</code></pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🎤 Interview Questions & Answers</h2>
+
+            <div class="qa-list">
+                <div class="qa-item" data-index="0">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>When would you choose RAG over fine-tuning?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>Choose RAG when:</p>
+                        <ul>
+                            <li><strong>Knowledge changes:</strong> Product catalogs, documentation, news</li>
+                            <li><strong>Citations needed:</strong> Legal, medical, compliance use cases</li>
+                            <li><strong>Quick iteration:</strong> Prototype in days/weeks, not months</li>
+                            <li><strong>Limited data:</strong> Have documents but not training examples</li>
+                            <li><strong>Cost constraints:</strong> No GPU budget for training</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="1">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>When is fine-tuning the better choice?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>Choose fine-tuning when:</p>
+                        <ul>
+                            <li><strong>Specific output format:</strong> JSON structure, report templates</li>
+                            <li><strong>Domain style:</strong> Legal writing, medical terminology</li>
+                            <li><strong>Behavior change:</strong> Be more concise, follow specific instructions</li>
+                            <li><strong>Latency critical:</strong> Can't afford retrieval overhead</li>
+                            <li><strong>Knowledge is static:</strong> Won't change often</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="2">
+                    <div class="qa-question">
+                        <span class="q-icon">Q3</span>
+                        <span>What is LoRA and why is it popular?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>LoRA (Low-Rank Adaptation) is a parameter-efficient fine-tuning method:</p>
+                        <ul>
+                            <li>Only trains small "adapter" layers (~0.1% of parameters)</li>
+                            <li>Freezes base model weights</li>
+                            <li>Much faster and cheaper than full fine-tuning</li>
+                            <li>Can swap adapters for different tasks</li>
+                        </ul>
+                        <p><strong>Why popular:</strong> Makes fine-tuning accessible - can fine-tune 7B model on single
+                            GPU.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="3">
+                    <div class="qa-question">
+                        <span class="q-icon">Q4</span>
+                        <span>Why did you choose RAG for Trident's system?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer (Your Project):</strong></p>
+                        <p>For the breakdown intelligence system, I chose RAG because:</p>
+                        <ul>
+                            <li><strong>Dynamic knowledge:</strong> New breakdown reports added daily</li>
+                            <li><strong>Citations required:</strong> Operators needed to verify suggestions against
+                                source incidents</li>
+                            <li><strong>No training data:</strong> Had documents, not input/output examples</li>
+                            <li><strong>Quick deployment:</strong> POC needed in 2-3 weeks</li>
+                            <li><strong>Reduce hallucination:</strong> Safety-critical environment, can't have incorrect
+                                instructions</li>
+                        </ul>
+                        <p>Fine-tuning would help if we needed specific output format - we use prompt engineering
+                            instead.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🔗 Related Topics</h2>
+            <div class="related-grid">
+                <a href="topic-rag-architecture.html" class="related-link">
+                    <span class="related-icon">🔍</span>
+                    <span>RAG Architecture</span>
+                </a>
+                <a href="topic-prompt-engineering.html" class="related-link">
+                    <span class="related-icon">✍️</span>
+                    <span>Prompt Engineering</span>
+                </a>
+                <a href="topic-llm-guardrails.html" class="related-link">
+                    <span class="related-icon">🛡️</span>
+                    <span>LLM Guardrails</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

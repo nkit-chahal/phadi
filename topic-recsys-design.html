@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommendation Systems | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">📈</div>
+            <div class="topic-info">
+                <span class="topic-category">ML System Design</span>
+                <h1 class="topic-title">Recommendation Systems</h1>
+                <p class="topic-subtitle">Design personalized recommendation engines at scale</p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 Recommendation Architecture</h2>
+            <div class="diagram-box">
+                <pre>
+User Request → Candidate Generation → Ranking → Re-ranking → Results
+                    (1000s)           (100s)     (10s)        (N)
+
+Stage 1: Fast, simple models (embeddings, rules)
+Stage 2: Complex models with more features  
+Stage 3: Business rules, diversity, freshness
+                </pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>📖 Recommendation Approaches</h2>
+
+            <h3>1. Collaborative Filtering</h3>
+            <ul>
+                <li><strong>User-based:</strong> Similar users like similar items</li>
+                <li><strong>Item-based:</strong> Similar items liked by same users</li>
+                <li><strong>Matrix Factorization:</strong> SVD, ALS for implicit feedback</li>
+                <li><strong>Pros:</strong> No content features needed</li>
+                <li><strong>Cons:</strong> Cold start problem, sparsity</li>
+            </ul>
+
+            <h3>2. Content-Based Filtering</h3>
+            <ul>
+                <li>Use item features (genre, category, embeddings)</li>
+                <li>Match user profile to item profiles</li>
+                <li><strong>Pros:</strong> Works for new items</li>
+                <li><strong>Cons:</strong> Limited discovery, needs good features</li>
+            </ul>
+
+            <h3>3. Hybrid (Most Common)</h3>
+            <ul>
+                <li>Combine collaborative + content signals</li>
+                <li><strong>Two-tower model:</strong> User tower + Item tower → dot product</li>
+                <li><strong>Wide & Deep:</strong> Memorization + generalization</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>🏗️ System Architecture</h2>
+
+            <h3>Two-Stage Pipeline</h3>
+            <div class="diagram-box">
+                <pre>
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│ Candidate Gen   │ →  │    Ranking      │ →  │   Re-ranking    │
+│ (Retrieval)     │    │   (Scoring)     │    │  (Business)     │
+├─────────────────┤    ├─────────────────┤    ├─────────────────┤
+│ • ANN search    │    │ • Deep model    │    │ • Diversity     │
+│ • Two-tower     │    │ • User features │    │ • Freshness     │
+│ • Filter rules  │    │ • Context       │    │ • Boost/Bury    │
+│ • 10K → 500     │    │ • 500 → 50      │    │ • 50 → 10       │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                </pre>
+            </div>
+
+            <h3>Cold Start Solutions</h3>
+            <ul>
+                <li><strong>New users:</strong> Popular items, onboarding quiz, demographics</li>
+                <li><strong>New items:</strong> Content features, explore/exploit, boosting</li>
+            </ul>
+
+            <h3>Metrics</h3>
+            <ul>
+                <li><strong>Offline:</strong> NDCG, Hit Rate, Recall@K, MRR</li>
+                <li><strong>Online:</strong> CTR, Watch Time, Conversion, Revenue</li>
+                <li><strong>Guardrails:</strong> Diversity, Coverage, Freshness</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>💻 Code Examples</h2>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Two-Tower Model (PyTorch)</span>
+                </div>
+                <pre><code>import torch
+import torch.nn as nn
+
+class TwoTowerModel(nn.Module):
+    def __init__(self, num_users, num_items, embedding_dim=64):
+        super().__init__()
+        
+        # User tower
+        self.user_embedding = nn.Embedding(num_users, embedding_dim)
+        self.user_mlp = nn.Sequential(
+            nn.Linear(embedding_dim, 128),
+            nn.ReLU(),
+            nn.Linear(128, embedding_dim)
+        )
+        
+        # Item tower
+        self.item_embedding = nn.Embedding(num_items, embedding_dim)
+        self.item_mlp = nn.Sequential(
+            nn.Linear(embedding_dim, 128),
+            nn.ReLU(),
+            nn.Linear(128, embedding_dim)
+        )
+    
+    def forward(self, user_ids, item_ids):
+        # Get embeddings
+        user_emb = self.user_embedding(user_ids)
+        item_emb = self.item_embedding(item_ids)
+        
+        # Through MLPs
+        user_vec = self.user_mlp(user_emb)
+        item_vec = self.item_mlp(item_emb)
+        
+        # Dot product for similarity
+        scores = (user_vec * item_vec).sum(dim=1)
+        return torch.sigmoid(scores)
+    
+    def get_user_embedding(self, user_id):
+        return self.user_mlp(self.user_embedding(user_id))
+    
+    def get_item_embedding(self, item_id):
+        return self.item_mlp(self.item_embedding(item_id))</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Candidate Generation with FAISS</span>
+                </div>
+                <pre><code>import faiss
+import numpy as np
+
+# Build index with item embeddings
+item_embeddings = model.get_all_item_embeddings()  # [num_items, dim]
+dimension = item_embeddings.shape[1]
+
+# Create FAISS index
+index = faiss.IndexFlatIP(dimension)  # Inner product (for cosine after L2 norm)
+faiss.normalize_L2(item_embeddings)
+index.add(item_embeddings)
+
+def get_candidates(user_id, k=100):
+    """Retrieve top-K candidate items for user."""
+    # Get user embedding
+    user_emb = model.get_user_embedding(user_id).numpy()
+    faiss.normalize_L2(user_emb.reshape(1, -1))
+    
+    # Search
+    scores, indices = index.search(user_emb.reshape(1, -1), k)
+    
+    return list(zip(indices[0], scores[0]))
+
+# Get candidates, then rank with full model
+candidates = get_candidates(user_id=123, k=500)
+ranked = ranker.rank(user_id=123, items=[c[0] for c in candidates])</code></pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🎤 Interview Questions & Answers</h2>
+
+            <div class="qa-list">
+                <div class="qa-item" data-index="0">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>Design a movie recommendation system.</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer Framework:</strong></p>
+                        <ol>
+                            <li><strong>Clarify:</strong> Netflix-scale? New users? Real-time?</li>
+                            <li><strong>Metrics:</strong> Watch completion, CTR, time spent</li>
+                            <li><strong>Data:</strong> Watch history, ratings, movie metadata</li>
+                            <li><strong>Model:</strong>
+                                <ul>
+                                    <li>Candidate gen: Two-tower embeddings</li>
+                                    <li>Ranking: Deep model with user/movie/context features</li>
+                                </ul>
+                            </li>
+                            <li><strong>Serving:</strong> Pre-compute candidates, real-time ranking</li>
+                            <li><strong>Cold start:</strong> Popular movies, onboarding preferences</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="1">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>What is the cold start problem?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>Difficulty recommending for new users or items with no interaction history.</p>
+                        <p><strong>Solutions:</strong></p>
+                        <ul>
+                            <li><strong>New users:</strong> Demographics, onboarding quiz, popular items, explore</li>
+                            <li><strong>New items:</strong> Content features, creator history, boosting period</li>
+                            <li><strong>General:</strong> Explore/exploit balance, fallback to popularity</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="2">
+                    <div class="qa-question">
+                        <span class="q-icon">Q3</span>
+                        <span>How do you ensure recommendation diversity?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Intra-list diversity:</strong> MMR (Maximal Marginal Relevance) re-ranking</li>
+                            <li><strong>Coverage metrics:</strong> Track % of catalog recommended</li>
+                            <li><strong>Category balancing:</strong> Ensure mix of genres/types</li>
+                            <li><strong>Explore slots:</strong> Reserve positions for discovery</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🔗 Related Topics</h2>
+            <div class="related-grid">
+                <a href="topic-search-ranking.html" class="related-link">
+                    <span class="related-icon">🔍</span>
+                    <span>Search & Ranking</span>
+                </a>
+                <a href="topic-ml-design-framework.html" class="related-link">
+                    <span class="related-icon">🎯</span>
+                    <span>ML Design Framework</span>
+                </a>
+                <a href="topic-model-serving.html" class="related-link">
+                    <span class="related-icon">🚀</span>
+                    <span>Model Serving</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

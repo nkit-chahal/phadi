@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Train/Val/Test Split | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">✂️</div>
+            <div class="topic-info">
+                <span class="topic-category">ML Fundamentals</span>
+                <h1 class="topic-title">Train/Val/Test Split</h1>
+                <p class="topic-subtitle">Properly splitting data for unbiased model evaluation</p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 Quick Summary</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">📚</span>
+                    <div>
+                        <strong>Training Set (70-80%)</strong>
+                        <p>Model learns patterns from this data</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🔧</span>
+                    <div>
+                        <strong>Validation Set (10-15%)</strong>
+                        <p>Tune hyperparameters, early stopping, model selection</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">✅</span>
+                    <div>
+                        <strong>Test Set (10-15%)</strong>
+                        <p>Final unbiased evaluation. NEVER use for tuning!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>📖 Why Three Splits?</h2>
+
+            <h3>The Problem</h3>
+            <p>If you tune hyperparameters on test set, you're indirectly fitting to test data. Your "test accuracy"
+                becomes optimistic and won't generalize.</p>
+
+            <h3>The Solution</h3>
+            <ul>
+                <li><strong>Training:</strong> Fit model parameters (weights)</li>
+                <li><strong>Validation:</strong> Fit hyperparameters (learning rate, layers, etc.)</li>
+                <li><strong>Test:</strong> Completely untouched until final evaluation</li>
+            </ul>
+
+            <h3>Typical Ratios</h3>
+            <div class="diagram-box">
+                <pre>
+Large Dataset (>100K samples):   80% / 10% / 10%
+Medium Dataset (10K-100K):       70% / 15% / 15%
+Small Dataset (<10K):            Use K-Fold Cross-Validation
+
+Time Series:                     Train on past, test on future
+                                 (NO random shuffle!)
+                </pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🔄 Cross-Validation</h2>
+
+            <h3>K-Fold Cross-Validation</h3>
+            <ul>
+                <li>Split data into K equal parts (folds)</li>
+                <li>Train on K-1 folds, validate on 1 fold</li>
+                <li>Repeat K times, average results</li>
+                <li><strong>Common K:</strong> 5 or 10</li>
+            </ul>
+
+            <div class="diagram-box">
+                <pre>
+Fold 1: [Val] [Train] [Train] [Train] [Train]
+Fold 2: [Train] [Val] [Train] [Train] [Train]
+Fold 3: [Train] [Train] [Val] [Train] [Train]
+Fold 4: [Train] [Train] [Train] [Val] [Train]
+Fold 5: [Train] [Train] [Train] [Train] [Val]
+
+Final score = Average of all 5 fold scores
+                </pre>
+            </div>
+
+            <h3>Stratified K-Fold</h3>
+            <ul>
+                <li>Maintains class distribution in each fold</li>
+                <li><strong>Must use for:</strong> Imbalanced classification</li>
+            </ul>
+
+            <h3>Time Series Split</h3>
+            <ul>
+                <li>Train on past, validate on future</li>
+                <li><strong>Never shuffle!</strong> Would cause data leakage</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>💻 Code Examples</h2>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Basic Train/Val/Test Split</span>
+                </div>
+                <pre><code>from sklearn.model_selection import train_test_split
+
+# First split: separate test set
+X_temp, X_test, y_temp, y_test = train_test_split(
+    X, y, test_size=0.15, random_state=42, stratify=y
+)
+
+# Second split: train and validation
+X_train, X_val, y_train, y_val = train_test_split(
+    X_temp, y_temp, test_size=0.18, random_state=42, stratify=y_temp
+)
+# 0.18 of 0.85 ≈ 0.15 of total
+
+print(f"Train: {len(X_train)}, Val: {len(X_val)}, Test: {len(X_test)}")
+# Roughly 70-15-15 split</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">K-Fold Cross-Validation</span>
+                </div>
+                <pre><code>from sklearn.model_selection import KFold, StratifiedKFold, cross_val_score
+from sklearn.ensemble import RandomForestClassifier
+
+# Basic K-Fold
+kfold = KFold(n_splits=5, shuffle=True, random_state=42)
+
+# Stratified K-Fold (for imbalanced data)
+skfold = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+
+# Using cross_val_score
+model = RandomForestClassifier()
+scores = cross_val_score(model, X, y, cv=skfold, scoring='f1')
+
+print(f"F1 Scores: {scores}")
+print(f"Mean: {scores.mean():.3f} (+/- {scores.std()*2:.3f})")
+
+# Manual K-Fold (when you need more control)
+for fold, (train_idx, val_idx) in enumerate(skfold.split(X, y)):
+    X_train, X_val = X[train_idx], X[val_idx]
+    y_train, y_val = y[train_idx], y[val_idx]
+    
+    model.fit(X_train, y_train)
+    score = model.score(X_val, y_val)
+    print(f"Fold {fold+1}: {score:.3f}")</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Time Series Split</span>
+                </div>
+                <pre><code>from sklearn.model_selection import TimeSeriesSplit
+
+# Time series data - NEVER shuffle!
+tscv = TimeSeriesSplit(n_splits=5)
+
+for fold, (train_idx, val_idx) in enumerate(tscv.split(X)):
+    print(f"Fold {fold+1}:")
+    print(f"  Train indices: {train_idx[0]} to {train_idx[-1]}")
+    print(f"  Val indices: {val_idx[0]} to {val_idx[-1]}")
+    
+# Output:
+# Fold 1: Train [0-16], Val [17-33]
+# Fold 2: Train [0-33], Val [34-50]
+# ... and so on (train grows, val shifts forward)</code></pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🎤 Interview Questions & Answers</h2>
+
+            <div class="qa-list">
+                <div class="qa-item" data-index="0">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>What's the difference between validation and test set?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Validation:</strong> Used during training for hyperparameter tuning, early
+                                stopping, model selection. Can look at it multiple times.</li>
+                            <li><strong>Test:</strong> ONLY used once at the very end for final, unbiased evaluation.
+                                Should be treated as "locked away."</li>
+                        </ul>
+                        <p>If you tune based on test performance, you're effectively training on it, and your results
+                            won't generalize.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="1">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>When would you NOT use random shuffle for splitting?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Time series data:</strong> Shuffling would leak future information into training
+                                (data leakage)</li>
+                            <li><strong>Grouped data:</strong> If samples from same source (e.g., same patient) must
+                                stay together</li>
+                            <li><strong>Sequential data:</strong> When order matters for the problem</li>
+                        </ul>
+                        <p>Always split by time for time series: train on past, predict future.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="2">
+                    <div class="qa-question">
+                        <span class="q-icon">Q3</span>
+                        <span>What is stratified sampling and when to use it?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>Stratified sampling maintains the same class distribution in each split as the original data.
+                        </p>
+                        <p><strong>When to use:</strong></p>
+                        <ul>
+                            <li>Imbalanced classification (e.g., 95% negative, 5% positive)</li>
+                            <li>Multi-class with varying class frequencies</li>
+                            <li>Small datasets where random split might not preserve distribution</li>
+                        </ul>
+                        <p><strong>Example:</strong> If 5% fraud in data, each fold should also have ~5% fraud.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="3">
+                    <div class="qa-question">
+                        <span class="q-icon">Q4</span>
+                        <span>How did you split data in your projects?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer (Personalized for Ankit):</strong></p>
+                        <ul>
+                            <li><strong>YOLOv5 (Lincode):</strong> 80/10/10 stratified by defect type. Used YOLO's
+                                built-in validation for mAP tracking.</li>
+                            <li><strong>Crop yield forecasting (AgriWatch):</strong> Time-based split - trained on 40
+                                years, validated on 5 years, tested on most recent 5 years. Never shuffled.</li>
+                            <li><strong>RAG evaluation (Trident):</strong> Created held-out test set of real operator
+                                queries, never used during retrieval tuning.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🔗 Related Topics</h2>
+            <div class="related-grid">
+                <a href="topic-bias-variance.html" class="related-link">
+                    <span class="related-icon">⚖️</span>
+                    <span>Bias-Variance</span>
+                </a>
+                <a href="topic-evaluation-metrics.html" class="related-link">
+                    <span class="related-icon">📊</span>
+                    <span>Evaluation Metrics</span>
+                </a>
+                <a href="topic-imbalanced-data.html" class="related-link">
+                    <span class="related-icon">⚖️</span>
+                    <span>Imbalanced Data</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search & Ranking | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">🔍</div>
+            <div class="topic-info">
+                <span class="topic-category">ML System Design</span>
+                <h1 class="topic-title">Search & Ranking</h1>
+                <p class="topic-subtitle">Design search systems with ML-powered ranking</p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 Search Pipeline</h2>
+            <div class="diagram-box">
+                <pre>
+Query → Query Understanding → Retrieval → Ranking → Re-ranking → Results
+              ↓                   ↓           ↓           ↓
+         Spell check,        BM25 +      L2R model   Personalize,
+         Expansion,         Semantic                 Diversity
+         Intent
+                </pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>📖 Search Components</h2>
+
+            <h3>1. Query Understanding</h3>
+            <ul>
+                <li><strong>Spell correction:</strong> Fix typos (Levenshtein, neural)</li>
+                <li><strong>Query expansion:</strong> Add synonyms, related terms</li>
+                <li><strong>Intent classification:</strong> Navigational, informational, transactional</li>
+                <li><strong>Entity recognition:</strong> Extract products, brands, categories</li>
+            </ul>
+
+            <h3>2. Retrieval</h3>
+            <ul>
+                <li><strong>Lexical (BM25):</strong> Fast, keyword matching</li>
+                <li><strong>Semantic:</strong> Dense embeddings, captures meaning</li>
+                <li><strong>Hybrid:</strong> Combine both (most effective)</li>
+            </ul>
+
+            <h3>3. Ranking (Learning to Rank)</h3>
+            <ul>
+                <li><strong>Pointwise:</strong> Predict relevance score per document</li>
+                <li><strong>Pairwise:</strong> Learn which doc is more relevant (RankNet)</li>
+                <li><strong>Listwise:</strong> Optimize entire list (LambdaMART, LambdaRank)</li>
+            </ul>
+
+            <h3>4. Features for Ranking</h3>
+            <ul>
+                <li><strong>Query-document:</strong> BM25, TF-IDF, embedding similarity</li>
+                <li><strong>Document:</strong> PageRank, freshness, quality score</li>
+                <li><strong>User:</strong> Past clicks, preferences, location</li>
+                <li><strong>Context:</strong> Device, time, session</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>💻 Code Examples</h2>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Hybrid Search (BM25 + Semantic)</span>
+                </div>
+                <pre><code>from rank_bm25 import BM25Okapi
+from sentence_transformers import SentenceTransformer
+import numpy as np
+
+class HybridSearcher:
+    def __init__(self, documents):
+        self.documents = documents
+        
+        # BM25 index
+        tokenized = [doc.lower().split() for doc in documents]
+        self.bm25 = BM25Okapi(tokenized)
+        
+        # Semantic embeddings
+        self.encoder = SentenceTransformer('all-MiniLM-L6-v2')
+        self.embeddings = self.encoder.encode(documents)
+    
+    def search(self, query, k=10, alpha=0.5):
+        """
+        Hybrid search combining BM25 and semantic.
+        alpha: weight for BM25 (1-alpha for semantic)
+        """
+        # BM25 scores
+        bm25_scores = self.bm25.get_scores(query.lower().split())
+        bm25_scores = bm25_scores / (bm25_scores.max() + 1e-8)  # Normalize
+        
+        # Semantic scores
+        query_emb = self.encoder.encode([query])[0]
+        semantic_scores = np.dot(self.embeddings, query_emb)
+        semantic_scores = (semantic_scores + 1) / 2  # Normalize to [0,1]
+        
+        # Combine
+        combined = alpha * bm25_scores + (1 - alpha) * semantic_scores
+        
+        # Top-k
+        top_indices = np.argsort(combined)[::-1][:k]
+        return [(self.documents[i], combined[i]) for i in top_indices]
+
+# Usage
+searcher = HybridSearcher(documents)
+results = searcher.search("machine learning tutorial", k=5)</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">LambdaMART with LightGBM</span>
+                </div>
+                <pre><code>import lightgbm as lgb
+import numpy as np
+
+# Prepare data for LTR
+# group: number of docs per query
+# features: query-doc features
+# labels: relevance (0-4 scale)
+
+train_data = lgb.Dataset(
+    X_train, 
+    label=y_train,
+    group=query_groups_train
+)
+
+params = {
+    'objective': 'lambdarank',
+    'metric': 'ndcg',
+    'ndcg_eval_at': [5, 10],
+    'learning_rate': 0.1,
+    'num_leaves': 31,
+    'min_data_in_leaf': 20
+}
+
+ranker = lgb.train(
+    params,
+    train_data,
+    num_boost_round=200,
+    valid_sets=[valid_data]
+)
+
+# Predict
+scores = ranker.predict(X_test)
+
+# Rank documents by score
+ranked_docs = sorted(zip(documents, scores), key=lambda x: -x[1])</code></pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🎤 Interview Questions & Answers</h2>
+
+            <div class="qa-list">
+                <div class="qa-item" data-index="0">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>Design a search system for e-commerce.</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer Framework:</strong></p>
+                        <ol>
+                            <li><strong>Query understanding:</strong> Spell check, category detection, brand extraction
+                            </li>
+                            <li><strong>Retrieval:</strong> Hybrid (BM25 + semantic), filtered by category/availability
+                            </li>
+                            <li><strong>Ranking features:</strong>
+                                <ul>
+                                    <li>Relevance: BM25, embedding similarity</li>
+                                    <li>Popularity: Sales, views, ratings</li>
+                                    <li>Personalization: User history, preferences</li>
+                                    <li>Business: Margin, inventory, promoted</li>
+                                </ul>
+                            </li>
+                            <li><strong>Metrics:</strong> CTR, Add-to-cart, Revenue per search</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="1">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>What is Learning to Rank?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>ML approach to rank documents by relevance:</p>
+                        <ul>
+                            <li><strong>Pointwise:</strong> Regression on relevance score</li>
+                            <li><strong>Pairwise:</strong> Binary classification on pairs (which is more relevant)</li>
+                            <li><strong>Listwise:</strong> Directly optimize ranking metrics (NDCG)</li>
+                        </ul>
+                        <p><strong>LambdaMART</strong> (listwise) is most popular - uses gradient boosting with lambdas
+                            that approximate NDCG gradient.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="2">
+                    <div class="qa-question">
+                        <span class="q-icon">Q3</span>
+                        <span>How does this relate to your RAG work?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer (Your Project):</strong></p>
+                        <p>RAG is essentially search + generation:</p>
+                        <ul>
+                            <li><strong>Retrieval:</strong> Same concepts - BM25 + semantic hybrid</li>
+                            <li><strong>Ranking:</strong> Reranking step with cross-encoder</li>
+                            <li><strong>Difference:</strong> Instead of showing results, feed to LLM</li>
+                        </ul>
+                        <p>At Trident, I used hybrid search (semantic + machine code matching) - same principle as
+                            e-commerce search but for technical documents.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🔗 Related Topics</h2>
+            <div class="related-grid">
+                <a href="topic-recsys-design.html" class="related-link">
+                    <span class="related-icon">📈</span>
+                    <span>Recommendation Systems</span>
+                </a>
+                <a href="topic-rag-architecture.html" class="related-link">
+                    <span class="related-icon">🔍</span>
+                    <span>RAG Architecture</span>
+                </a>
+                <a href="topic-vector-databases.html" class="related-link">
+                    <span class="related-icon">💾</span>
+                    <span>Vector Databases</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

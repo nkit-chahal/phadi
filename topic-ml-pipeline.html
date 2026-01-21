@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Pipeline Architecture | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">🔄</div>
+            <div class="topic-info">
+                <span class="topic-category">ML System Design</span>
+                <h1 class="topic-title">ML Pipeline Architecture</h1>
+                <p class="topic-subtitle">End-to-end pipelines from data to deployment (MLOps)</p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 Pipeline Overview</h2>
+            <div class="diagram-box">
+                <pre>
+Data Sources → Ingestion → Validation → Transform → Feature Store
+                                                         ↓
+Monitoring ← Serving ← Registry ← Evaluation ← Training ←
+                </pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>📖 Pipeline Components</h2>
+
+            <h3>1. Data Ingestion</h3>
+            <ul>
+                <li><strong>Batch:</strong> Daily/hourly ETL from data warehouse</li>
+                <li><strong>Streaming:</strong> Kafka, Kinesis for real-time events</li>
+                <li><strong>Tools:</strong> Airflow, Prefect, Dagster for orchestration</li>
+            </ul>
+
+            <h3>2. Data Validation</h3>
+            <ul>
+                <li><strong>Schema validation:</strong> Expected columns, types</li>
+                <li><strong>Statistical checks:</strong> Distribution drift, missing values</li>
+                <li><strong>Tools:</strong> Great Expectations, TensorFlow Data Validation</li>
+            </ul>
+
+            <h3>3. Feature Engineering & Store</h3>
+            <ul>
+                <li><strong>Feature Store:</strong> Central repo for features (Feast, Tecton)</li>
+                <li><strong>Benefits:</strong> Reusability, consistency between training/serving</li>
+                <li><strong>Offline store:</strong> Historical features for training</li>
+                <li><strong>Online store:</strong> Low-latency features for serving</li>
+            </ul>
+
+            <h3>4. Training Pipeline</h3>
+            <ul>
+                <li><strong>Experiment tracking:</strong> MLflow, Weights & Biases</li>
+                <li><strong>Hyperparameter tuning:</strong> Optuna, Ray Tune</li>
+                <li><strong>Distributed training:</strong> Ray, Horovod</li>
+                <li><strong>Versioning:</strong> DVC for data, Git for code</li>
+            </ul>
+
+            <h3>5. Model Registry</h3>
+            <ul>
+                <li>Version control for models</li>
+                <li>Stage management: dev → staging → production</li>
+                <li><strong>Tools:</strong> MLflow Model Registry, Vertex AI</li>
+            </ul>
+
+            <h3>6. Serving & Deployment</h3>
+            <ul>
+                <li><strong>Containers:</strong> Docker + Kubernetes</li>
+                <li><strong>Serving:</strong> TensorFlow Serving, TorchServe, Triton</li>
+                <li><strong>Serverless:</strong> AWS Lambda, Cloud Functions</li>
+            </ul>
+
+            <h3>7. Monitoring</h3>
+            <ul>
+                <li><strong>Model performance:</strong> Accuracy drift</li>
+                <li><strong>Data drift:</strong> Input distribution changes</li>
+                <li><strong>System:</strong> Latency, throughput, errors</li>
+                <li><strong>Tools:</strong> Evidently, Arize, custom dashboards</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>💻 Code Examples</h2>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Airflow DAG for ML Pipeline</span>
+                </div>
+                <pre><code>from airflow import DAG
+from airflow.operators.python import PythonOperator
+from datetime import datetime, timedelta
+
+default_args = {
+    'owner': 'ml-team',
+    'retries': 2,
+    'retry_delay': timedelta(minutes=5)
+}
+
+dag = DAG(
+    'ml_training_pipeline',
+    default_args=default_args,
+    schedule_interval='@daily',
+    start_date=datetime(2024, 1, 1)
+)
+
+def extract_data():
+    # Pull data from warehouse
+    pass
+
+def validate_data():
+    # Run Great Expectations checks
+    pass
+
+def train_model():
+    # Train and log to MLflow
+    pass
+
+def evaluate_model():
+    # Compare with baseline
+    pass
+
+def deploy_if_better():
+    # Promote to production if metrics improve
+    pass
+
+extract = PythonOperator(task_id='extract', python_callable=extract_data, dag=dag)
+validate = PythonOperator(task_id='validate', python_callable=validate_data, dag=dag)
+train = PythonOperator(task_id='train', python_callable=train_model, dag=dag)
+evaluate = PythonOperator(task_id='evaluate', python_callable=evaluate_model, dag=dag)
+deploy = PythonOperator(task_id='deploy', python_callable=deploy_if_better, dag=dag)
+
+extract >> validate >> train >> evaluate >> deploy</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">MLflow Experiment Tracking</span>
+                </div>
+                <pre><code>import mlflow
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import f1_score
+
+mlflow.set_experiment("fraud_detection")
+
+with mlflow.start_run(run_name="rf_baseline"):
+    # Log parameters
+    params = {"n_estimators": 100, "max_depth": 10}
+    mlflow.log_params(params)
+    
+    # Train model
+    model = RandomForestClassifier(**params)
+    model.fit(X_train, y_train)
+    
+    # Evaluate
+    y_pred = model.predict(X_test)
+    f1 = f1_score(y_test, y_pred)
+    
+    # Log metrics
+    mlflow.log_metric("f1_score", f1)
+    mlflow.log_metric("accuracy", accuracy)
+    
+    # Log model
+    mlflow.sklearn.log_model(model, "model")
+    
+    # Register if good
+    if f1 > 0.85:
+        mlflow.register_model(
+            f"runs:/{mlflow.active_run().info.run_id}/model",
+            "fraud_detector"
+        )</code></pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🎤 Interview Questions & Answers</h2>
+
+            <div class="qa-list">
+                <div class="qa-item" data-index="0">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>What is a feature store and why use one?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>A feature store is a centralized repository for storing and serving ML features.</p>
+                        <p><strong>Benefits:</strong></p>
+                        <ul>
+                            <li><strong>Consistency:</strong> Same features for training and serving</li>
+                            <li><strong>Reusability:</strong> Share features across teams/models</li>
+                            <li><strong>Freshness:</strong> Automated feature updates</li>
+                            <li><strong>Point-in-time correctness:</strong> Prevents data leakage</li>
+                        </ul>
+                        <p><strong>Examples:</strong> Feast (open source), Tecton, Vertex AI Feature Store</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="1">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>How do you handle model versioning?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Code:</strong> Git with tags for releases</li>
+                            <li><strong>Data:</strong> DVC (Data Version Control) or S3 versioning</li>
+                            <li><strong>Models:</strong> MLflow Model Registry with stages</li>
+                            <li><strong>Experiments:</strong> MLflow/W&B for tracking all runs</li>
+                        </ul>
+                        <p>Each model version should link to: code commit, data version, training params, and metrics.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="2">
+                    <div class="qa-question">
+                        <span class="q-icon">Q3</span>
+                        <span>Describe your ML pipeline experience.</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer (Your Project):</strong></p>
+                        <p>At Lincode (YOLOv5 defect detection):</p>
+                        <ul>
+                            <li><strong>Data:</strong> Camera images → S3 → annotation tool → training</li>
+                            <li><strong>Training:</strong> Custom training script with hyperparameter configs</li>
+                            <li><strong>Evaluation:</strong> mAP on held-out test set, per-class analysis</li>
+                            <li><strong>Deployment:</strong> Edge device with optimized ONNX model</li>
+                            <li><strong>Monitoring:</strong> Production accuracy tracking, alert on drift</li>
+                        </ul>
+                        <p>Retraining triggered when new defect types appeared or accuracy dropped below threshold.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🔗 Related Topics</h2>
+            <div class="related-grid">
+                <a href="topic-ml-design-framework.html" class="related-link">
+                    <span class="related-icon">🎯</span>
+                    <span>ML Design Framework</span>
+                </a>
+                <a href="topic-model-serving.html" class="related-link">
+                    <span class="related-icon">🚀</span>
+                    <span>Model Serving</span>
+                </a>
+                <a href="topic-data-infra.html" class="related-link">
+                    <span class="related-icon">📊</span>
+                    <span>Data Infrastructure</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

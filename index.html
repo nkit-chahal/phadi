@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ankit Chahal | Interview Prep Hub</title>
+    <meta name="description" content="Personalized AI/ML Interview Preparation Platform for Ankit Chahal">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="nav-links">
+            <a href="#dashboard" class="nav-link active">Dashboard</a>
+            <a href="#dsa" class="nav-link">DSA</a>
+            <a href="#ml" class="nav-link">ML/DL</a>
+            <a href="#genai" class="nav-link">GenAI</a>
+            <a href="#systemdesign" class="nav-link">System Design</a>
+            <a href="#behavioral" class="nav-link">Behavioral</a>
+        </div>
+        <div class="nav-profile">
+            <img src="https://ui-avatars.com/api/?name=Ankit+Chahal&background=6366f1&color=fff&bold=true" alt="Profile"
+                class="profile-img">
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section id="dashboard" class="hero-section">
+            <div class="hero-content">
+                <div class="welcome-badge">👋 Welcome back, Ankit!</div>
+                <h1 class="hero-title">
+                    Your <span class="gradient-text">AI/ML Interview</span> Command Center
+                </h1>
+                <p class="hero-subtitle">
+                    5 years experience • Targeting Tier 2 MNCs • GenAI Specialist
+                </p>
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="overall-progress">0%</span>
+                            <span class="stat-label">Overall Progress</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💡</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="problems-solved">0/58</span>
+                            <span class="stat-label">DSA Problems</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="concepts-mastered">0/25</span>
+                            <span class="stat-label">Concepts Mastered</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🔥</div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="streak-days">0</span>
+                            <span class="stat-label">Day Streak</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DSA Section -->
+        <section id="dsa" class="content-section">
+            <div class="section-header">
+                <h2 class="section-title">🧩 DSA Practice</h2>
+                <p class="section-subtitle">58 curated problems for Tier 2 MNC interviews</p>
+            </div>
+
+            <div class="category-tabs">
+                <button class="tab-btn active" data-category="arrays">Arrays & Strings</button>
+                <button class="tab-btn" data-category="hashmap">HashMap</button>
+                <button class="tab-btn" data-category="twopointer">Two Pointers</button>
+                <button class="tab-btn" data-category="trees">Trees</button>
+                <button class="tab-btn" data-category="dp">DP</button>
+                <button class="tab-btn" data-category="sql">SQL</button>
+            </div>
+
+            <div class="problems-grid" id="problems-container">
+                <!-- Problems will be dynamically loaded -->
+            </div>
+        </section>
+
+        <!-- ML Fundamentals Section -->
+        <section id="ml" class="content-section">
+            <div class="section-header">
+                <h2 class="section-title">🧠 ML/DL Fundamentals</h2>
+                <p class="section-subtitle">Core concepts every AI engineer must know</p>
+            </div>
+
+            <div class="concepts-grid" id="ml-concepts">
+                <!-- Will be populated by JS -->
+            </div>
+        </section>
+
+        <!-- GenAI Section -->
+        <section id="genai" class="content-section">
+            <div class="section-header">
+                <h2 class="section-title">✨ GenAI & LLMs</h2>
+                <p class="section-subtitle">Your strongest differentiator - master these!</p>
+                <span class="strength-badge">💪 Your Strength</span>
+            </div>
+
+            <div class="genai-cards" id="genai-container">
+                <!-- Will be populated by JS -->
+            </div>
+        </section>
+
+        <!-- System Design Section -->
+        <section id="systemdesign" class="content-section">
+            <div class="section-header">
+                <h2 class="section-title">🏗️ ML System Design</h2>
+                <p class="section-subtitle">Design scalable ML systems & pipelines</p>
+            </div>
+
+            <div class="systemdesign-cards" id="systemdesign-container">
+                <!-- Will be populated by JS -->
+            </div>
+        </section>
+
+        <!-- Behavioral Section -->
+        <section id="behavioral" class="content-section">
+            <div class="section-header">
+                <h2 class="section-title">🎤 Behavioral & Projects</h2>
+                <p class="section-subtitle">STAR format stories from your experience</p>
+            </div>
+
+            <div class="stories-container" id="stories-container">
+                <!-- Will be populated by JS -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Floating Action Button -->
+    <button class="fab" id="quick-practice" title="Quick Practice">
+        <span>⚡</span>
+    </button>
+
+    <!-- Modal for flashcards/quick practice -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal" id="flashcard-modal">
+            <div class="modal-header">
+                <h3>Quick Practice</h3>
+                <button class="modal-close" id="modal-close">×</button>
+            </div>
+            <div class="modal-body" id="modal-content">
+                <!-- Dynamic content -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="prev-card">← Previous</button>
+                <button class="btn btn-primary" id="next-card">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

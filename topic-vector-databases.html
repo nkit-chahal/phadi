@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vector Databases | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">💾</div>
+            <div class="topic-info">
+                <span class="topic-category">GenAI & LLMs</span>
+                <h1 class="topic-title">Vector Databases</h1>
+                <p class="topic-subtitle">Storage and retrieval of embeddings for semantic search</p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 Quick Comparison</h2>
+            <div class="diagram-box">
+                <pre>
+| Database   | Type      | Best For                    | Scale     |
+|------------|-----------|-----------------------------| ----------|
+| ChromaDB   | Embedded  | Prototyping, small-medium   | <1M       |
+| FAISS      | Library   | Research, custom pipelines  | Millions  |
+| Pinecone   | Managed   | Production, enterprise      | Billions  |
+| Weaviate   | Self-host | Hybrid search, GraphQL      | Millions  |
+| Qdrant     | Self-host | High performance, filtering | Millions  |
+                </pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>📖 Vector Database Options</h2>
+
+            <h3>ChromaDB</h3>
+            <ul>
+                <li><strong>Type:</strong> Embedded / Client-server</li>
+                <li><strong>Pros:</strong> Easy setup, great for development, Python-native</li>
+                <li><strong>Cons:</strong> Not for massive scale (>1M vectors)</li>
+                <li><strong>Best for:</strong> POCs, small-medium production, local development</li>
+            </ul>
+
+            <h3>FAISS (Facebook AI Similarity Search)</h3>
+            <ul>
+                <li><strong>Type:</strong> Library (not a database)</li>
+                <li><strong>Pros:</strong> Very fast, GPU support, battle-tested</li>
+                <li><strong>Cons:</strong> No persistence by default, need to manage storage</li>
+                <li><strong>Best for:</strong> Research, custom implementations, performance-critical</li>
+            </ul>
+
+            <h3>Pinecone</h3>
+            <ul>
+                <li><strong>Type:</strong> Fully managed cloud service</li>
+                <li><strong>Pros:</strong> Scalable, no ops, fast, metadata filtering</li>
+                <li><strong>Cons:</strong> Paid, vendor lock-in</li>
+                <li><strong>Best for:</strong> Production enterprise, teams without ML infra</li>
+            </ul>
+
+            <h3>Weaviate</h3>
+            <ul>
+                <li><strong>Type:</strong> Self-hosted / Cloud</li>
+                <li><strong>Pros:</strong> Hybrid search built-in, GraphQL API, modules</li>
+                <li><strong>Cons:</strong> More complex setup</li>
+                <li><strong>Best for:</strong> When you need hybrid search out-of-box</li>
+            </ul>
+
+            <h3>Qdrant</h3>
+            <ul>
+                <li><strong>Type:</strong> Self-hosted / Cloud</li>
+                <li><strong>Pros:</strong> Fast, good filtering, Rust-based, modern API</li>
+                <li><strong>Cons:</strong> Newer ecosystem</li>
+                <li><strong>Best for:</strong> High-performance self-hosted deployment</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>💻 Code Examples</h2>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">ChromaDB Usage</span>
+                </div>
+                <pre><code>import chromadb
+from chromadb.config import Settings
+
+# Initialize client
+client = chromadb.Client(Settings(
+    chroma_db_impl="duckdb+parquet",
+    persist_directory="./chroma_db"
+))
+
+# Create collection
+collection = client.create_collection(
+    name="breakdown_docs",
+    metadata={"hnsw:space": "cosine"}  # Distance metric
+)
+
+# Add documents
+collection.add(
+    documents=["Motor overheating due to bearing failure", 
+               "Sensor calibration procedure for pressure gauge"],
+    metadatas=[{"machine": "CNC-01", "type": "electrical"},
+               {"machine": "Press-02", "type": "calibration"}],
+    ids=["doc1", "doc2"]
+)
+
+# Query
+results = collection.query(
+    query_texts=["how to fix overheating motor"],
+    n_results=3,
+    where={"machine": "CNC-01"}  # Metadata filtering
+)
+
+print(results["documents"])
+print(results["distances"])</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">FAISS Usage</span>
+                </div>
+                <pre><code>import faiss
+import numpy as np
+
+# Create embeddings (example: 1536 dimensions like OpenAI)
+dimension = 1536
+num_vectors = 10000
+
+# Random embeddings for demo
+embeddings = np.random.random((num_vectors, dimension)).astype('float32')
+
+# Build index
+index = faiss.IndexFlatL2(dimension)  # L2 distance
+print(f"Trained: {index.is_trained}")
+
+# Add vectors
+index.add(embeddings)
+print(f"Total vectors: {index.ntotal}")
+
+# Search
+query = np.random.random((1, dimension)).astype('float32')
+k = 5  # Top 5 results
+
+distances, indices = index.search(query, k)
+print(f"Nearest indices: {indices}")
+print(f"Distances: {distances}")
+
+# For large scale, use IVF index
+nlist = 100  # Number of clusters
+quantizer = faiss.IndexFlatL2(dimension)
+index_ivf = faiss.IndexIVFFlat(quantizer, dimension, nlist)
+index_ivf.train(embeddings)  # Must train on data
+index_ivf.add(embeddings)</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Pinecone Usage</span>
+                </div>
+                <pre><code>import pinecone
+from pinecone import Pinecone, ServerlessSpec
+
+# Initialize
+pc = Pinecone(api_key="your-api-key")
+
+# Create index
+pc.create_index(
+    name="breakdown-index",
+    dimension=1536,
+    metric="cosine",
+    spec=ServerlessSpec(cloud="aws", region="us-east-1")
+)
+
+# Get index
+index = pc.Index("breakdown-index")
+
+# Upsert vectors
+index.upsert(vectors=[
+    {
+        "id": "doc1",
+        "values": [0.1, 0.2, ...],  # 1536 floats
+        "metadata": {"machine": "CNC-01", "type": "electrical"}
+    },
+    {
+        "id": "doc2", 
+        "values": [0.3, 0.4, ...],
+        "metadata": {"machine": "Press-02", "type": "calibration"}
+    }
+])
+
+# Query with filtering
+results = index.query(
+    vector=[0.1, 0.2, ...],
+    top_k=5,
+    filter={"machine": {"$eq": "CNC-01"}},
+    include_metadata=True
+)</code></pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🎤 Interview Questions & Answers</h2>
+
+            <div class="qa-list">
+                <div class="qa-item" data-index="0">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>How do vector databases work?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ol>
+                            <li><strong>Store:</strong> Vectors (embeddings) along with metadata and IDs</li>
+                            <li><strong>Index:</strong> Build specialized index structure for fast search</li>
+                            <li><strong>Query:</strong> Find vectors closest to query vector using distance metric</li>
+                        </ol>
+                        <p><strong>Key concept: ANN (Approximate Nearest Neighbor)</strong></p>
+                        <ul>
+                            <li>Exact search is O(n) - too slow for millions of vectors</li>
+                            <li>ANN trades accuracy for speed - typically 95-99% recall at 10-100x speedup</li>
+                            <li>Common algorithms: HNSW, IVF, LSH</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="1">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>What distance metrics are used and when?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Cosine similarity:</strong> Measures angle between vectors. Best for normalized
+                                embeddings, NLP tasks. Most common choice.</li>
+                            <li><strong>Euclidean (L2):</strong> Measures straight-line distance. Good when magnitude
+                                matters.</li>
+                            <li><strong>Dot product:</strong> Fast, assumes normalized vectors. Used by OpenAI
+                                embeddings.</li>
+                        </ul>
+                        <p>For OpenAI embeddings (normalized), Cosine and Dot Product give same ranking.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="2">
+                    <div class="qa-question">
+                        <span class="q-icon">Q3</span>
+                        <span>Why did you choose ChromaDB over Pinecone?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer (Your Project):</strong></p>
+                        <p>For the breakdown intelligence system at Trident:</p>
+                        <ul>
+                            <li><strong>Scale:</strong> ~50K documents - ChromaDB handles this easily</li>
+                            <li><strong>Cost:</strong> On-prem deployment, no SaaS fees</li>
+                            <li><strong>Simplicity:</strong> Easy integration with LangChain</li>
+                            <li><strong>Latency:</strong> Local = fast, no network roundtrip</li>
+                            <li><strong>Data sensitivity:</strong> Manufacturing data stays on-prem</li>
+                        </ul>
+                        <p>Would choose Pinecone for: massive scale (>10M), multi-region, zero-ops requirement.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="3">
+                    <div class="qa-question">
+                        <span class="q-icon">Q4</span>
+                        <span>How do you handle updates in a vector database?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Upsert:</strong> Most DBs support upsert (insert or update by ID)</li>
+                            <li><strong>Re-embed:</strong> If document content changes, re-generate embedding</li>
+                            <li><strong>Versioning:</strong> Keep document version in metadata</li>
+                            <li><strong>Batch updates:</strong> For large updates, batch process to avoid index
+                                fragmentation</li>
+                        </ul>
+                        <p><strong>Best practice:</strong> Use document hash as ID - same content = same ID, automatic
+                            deduplication.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🔗 Related Topics</h2>
+            <div class="related-grid">
+                <a href="topic-rag-architecture.html" class="related-link">
+                    <span class="related-icon">🔍</span>
+                    <span>RAG Architecture</span>
+                </a>
+                <a href="topic-langchain.html" class="related-link">
+                    <span class="related-icon">🔗</span>
+                    <span>LangChain</span>
+                </a>
+                <a href="topic-finetuning-vs-rag.html" class="related-link">
+                    <span class="related-icon">⚡</span>
+                    <span>Fine-tuning vs RAG</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

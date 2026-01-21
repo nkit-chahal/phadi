@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Engineering | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">✍️</div>
+            <div class="topic-info">
+                <span class="topic-category">GenAI & LLMs</span>
+                <h1 class="topic-title">Prompt Engineering</h1>
+                <p class="topic-subtitle">Crafting effective prompts for optimal LLM outputs</p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 Key Principles</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">🎯</span>
+                    <div>
+                        <strong>Be Specific</strong>
+                        <p>Clear instructions, explicit constraints, define output format</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">📝</span>
+                    <div>
+                        <strong>Give Examples</strong>
+                        <p>Few-shot prompting for complex tasks, show expected format</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🧠</span>
+                    <div>
+                        <strong>Chain of Thought</strong>
+                        <p>"Think step by step" improves reasoning on complex problems</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>📖 Prompt Engineering Techniques</h2>
+
+            <h3>1. Zero-Shot Prompting</h3>
+            <p>Direct instruction without examples. Works for simple tasks.</p>
+            <div class="formula-box">
+                <code>Classify the sentiment of this review as positive, negative, or neutral: [review]</code>
+            </div>
+
+            <h3>2. Few-Shot Prompting</h3>
+            <p>Provide examples to guide the output format and style.</p>
+            <div class="formula-box">
+                <code>
+Example 1: "Great product!" → positive
+Example 2: "Terrible quality" → negative
+Example 3: "It's okay" → neutral
+
+Classify: "Absolutely loved it!" → ?
+                </code>
+            </div>
+
+            <h3>3. Chain of Thought (CoT)</h3>
+            <p>Ask the model to reason step by step. Hugely improves math/logic tasks.</p>
+            <div class="formula-box">
+                <code>"Let's think through this step by step..."</code>
+            </div>
+
+            <h3>4. Role Prompting</h3>
+            <p>Assign a persona to influence response style and expertise.</p>
+            <div class="formula-box">
+                <code>"You are an expert machine learning engineer at Google..."</code>
+            </div>
+
+            <h3>5. Output Format Constraints</h3>
+            <p>Specify exact output format for structured data.</p>
+            <div class="formula-box">
+                <code>
+Respond in JSON format:
+{
+  "issue": "...",
+  "root_cause": "...",
+  "solution": "..."
+}
+                </code>
+            </div>
+
+            <h3>6. System vs User vs Assistant Messages</h3>
+            <ul>
+                <li><strong>System:</strong> Sets overall behavior, rules, persona</li>
+                <li><strong>User:</strong> The actual question/request</li>
+                <li><strong>Assistant:</strong> Previous AI responses (for context)</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>💻 Code Examples</h2>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Structured Prompt for RAG</span>
+                </div>
+                <pre><code>from openai import AzureOpenAI
+
+def create_rag_prompt(query, context_docs):
+    """Create a well-structured prompt for RAG."""
+    
+    system_prompt = """You are a technical support assistant for manufacturing equipment.
+    
+RULES:
+- Only answer based on the provided context
+- If the answer is not in the context, say "I don't have information about this"
+- Be concise and actionable
+- Include specific part numbers or procedures when available
+- Cite the source document for each claim"""
+
+    # Format context
+    context = "\n\n".join([
+        f"[Source: {doc.metadata['source']}]\n{doc.page_content}"
+        for doc in context_docs
+    ])
+    
+    user_prompt = f"""Context documents:
+{context}
+
+---
+Question: {query}
+
+Provide a helpful answer based only on the context above. Include citations."""
+
+    return [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_prompt}
+    ]
+
+# Usage
+client = AzureOpenAI(...)
+messages = create_rag_prompt(query, retrieved_docs)
+response = client.chat.completions.create(
+    model="gpt-4",
+    messages=messages,
+    temperature=0  # Low for factual accuracy
+)</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Few-Shot Prompting with Examples</span>
+                </div>
+                <pre><code>def classify_breakdown(description):
+    """Classify breakdown type using few-shot prompting."""
+    
+    prompt = """Classify the machine breakdown into one of these categories:
+- ELECTRICAL: motor, wiring, sensor, PLC issues
+- MECHANICAL: bearing, gear, belt, alignment issues  
+- PNEUMATIC: air pressure, valve, cylinder issues
+- SOFTWARE: program, HMI, communication issues
+
+Examples:
+Description: "Motor making grinding noise and overheating"
+Category: MECHANICAL (bearing failure causing motor strain)
+
+Description: "PLC showing communication error with HMI"
+Category: SOFTWARE (communication protocol issue)
+
+Description: "Cylinder not extending fully, air leaking"
+Category: PNEUMATIC (valve or seal failure)
+
+Now classify:
+Description: "{description}"
+Category:"""
+
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=[{"role": "user", "content": prompt.format(description=description)}],
+        temperature=0
+    )
+    
+    return response.choices[0].message.content</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Chain of Thought for Complex Reasoning</span>
+                </div>
+                <pre><code>def diagnose_with_cot(symptoms):
+    """Use Chain of Thought for multi-step diagnosis."""
+    
+    prompt = f"""You are diagnosing a machine issue. Think through this step by step.
+
+Symptoms reported: {symptoms}
+
+Please analyze as follows:
+1. List all possible root causes for these symptoms
+2. For each cause, explain what evidence would confirm or rule it out
+3. Based on likelihood, rank the causes
+4. Recommend the first diagnostic step
+
+Think step by step:"""
+
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "You are an expert maintenance engineer."},
+            {"role": "user", "content": prompt}
+        ],
+        temperature=0.3  # Slightly higher for reasoning variety
+    )
+    
+    return response.choices[0].message.content
+
+# Usage
+result = diagnose_with_cot(
+    "Conveyor belt slipping, motor temperature high, unusual vibration"
+)</code></pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🎤 Interview Questions & Answers</h2>
+
+            <div class="qa-list">
+                <div class="qa-item" data-index="0">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>What is few-shot prompting and when to use it?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>Few-shot prompting provides examples of input-output pairs before the actual task.</p>
+                        <p><strong>When to use:</strong></p>
+                        <ul>
+                            <li>Complex output format that's hard to describe</li>
+                            <li>Specific style or tone requirements</li>
+                            <li>Classification with nuanced categories</li>
+                            <li>Tasks where zero-shot gives inconsistent results</li>
+                        </ul>
+                        <p><strong>Best practices:</strong></p>
+                        <ul>
+                            <li>3-5 examples usually sufficient</li>
+                            <li>Include edge cases in examples</li>
+                            <li>Keep examples representative and diverse</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="1">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>How does Chain of Thought improve LLM reasoning?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>CoT prompting asks the model to show its reasoning process before giving a final answer.</p>
+                        <p><strong>Why it works:</strong></p>
+                        <ul>
+                            <li>Forces the model to break down complex problems</li>
+                            <li>Each reasoning step becomes context for the next</li>
+                            <li>Reduces errors in multi-step reasoning</li>
+                            <li>Makes debugging easier - you can see where reasoning went wrong</li>
+                        </ul>
+                        <p><strong>When to use:</strong> Math problems, logic puzzles, multi-step analysis, debugging.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="2">
+                    <div class="qa-question">
+                        <span class="q-icon">Q3</span>
+                        <span>What's the difference between temperature and top_p?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Temperature (0-2):</strong> Controls randomness. Lower = more deterministic,
+                                higher = more creative.</li>
+                            <li><strong>Top_p (0-1):</strong> Nucleus sampling. Considers only tokens whose cumulative
+                                probability exceeds p.</li>
+                        </ul>
+                        <p><strong>Guidelines:</strong></p>
+                        <ul>
+                            <li>Factual tasks (RAG, classification): temp=0</li>
+                            <li>Creative writing: temp=0.7-1.0</li>
+                            <li>Code generation: temp=0-0.2</li>
+                            <li>Generally, tune one or the other, not both</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="3">
+                    <div class="qa-question">
+                        <span class="q-icon">Q4</span>
+                        <span>How did you design prompts in your RAG system?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer (Your Project):</strong></p>
+                        <p>For the breakdown intelligence system at Trident:</p>
+                        <ul>
+                            <li><strong>System prompt:</strong> Defined role as "maintenance expert", set rules to only
+                                use retrieved context</li>
+                            <li><strong>Context formatting:</strong> Each chunk with source metadata for citations</li>
+                            <li><strong>Output structure:</strong> JSON with issue, root_cause, solution, confidence
+                                fields</li>
+                            <li><strong>Grounding:</strong> "If answer not in context, say 'no information available'"
+                            </li>
+                            <li><strong>Temperature:</strong> 0 for consistent, factual responses</li>
+                        </ul>
+                        <p>Iterated on prompts based on operator feedback - added more specific formatting rules to get
+                            actionable outputs.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🔗 Related Topics</h2>
+            <div class="related-grid">
+                <a href="topic-rag-architecture.html" class="related-link">
+                    <span class="related-icon">🔍</span>
+                    <span>RAG Architecture</span>
+                </a>
+                <a href="topic-llm-guardrails.html" class="related-link">
+                    <span class="related-icon">🛡️</span>
+                    <span>LLM Guardrails</span>
+                </a>
+                <a href="topic-langchain.html" class="related-link">
+                    <span class="related-icon">🔗</span>
+                    <span>LangChain</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

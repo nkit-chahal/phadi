@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Architecture | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">🔍</div>
+            <div class="topic-info">
+                <span class="topic-category">GenAI & LLMs • Your Strength 💪</span>
+                <h1 class="topic-title">RAG Architecture</h1>
+                <p class="topic-subtitle">Retrieval-Augmented Generation for grounded LLM responses</p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 Quick Summary</h2>
+            <div class="diagram-box">
+                <pre>
+   Documents → Chunking → Embedding → Vector DB
+                                          ↓
+   Query → Embedding → Similarity Search → Top-K Chunks
+                                          ↓
+                    Context + Query → LLM → Response
+                </pre>
+            </div>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">📚</span>
+                    <div>
+                        <strong>Why RAG?</strong>
+                        <p>Ground LLM in external knowledge. Reduces hallucination. Always up-to-date.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🎯</span>
+                    <div>
+                        <strong>Key Components</strong>
+                        <p>Chunking, Embedding, Vector Store, Retrieval, Reranking, Generation</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>📖 RAG Pipeline Components</h2>
+
+            <h3>1. Document Ingestion & Chunking</h3>
+            <ul>
+                <li><strong>Why chunk?</strong> LLMs have context limits; chunks allow focused retrieval</li>
+                <li><strong>Chunk size:</strong> 500-1000 tokens typical, depends on content</li>
+                <li><strong>Overlap:</strong> 100-200 tokens to preserve context across boundaries</li>
+            </ul>
+            <p><strong>Chunking strategies:</strong></p>
+            <ul>
+                <li><strong>Fixed size:</strong> Simple, but may cut mid-sentence</li>
+                <li><strong>Recursive:</strong> Split by paragraphs, then sentences if too long</li>
+                <li><strong>Semantic:</strong> Group by topic using embeddings</li>
+                <li><strong>Document-aware:</strong> Respect headers, sections, tables</li>
+            </ul>
+
+            <h3>2. Embedding</h3>
+            <ul>
+                <li>Convert text chunks to dense vectors (768-1536 dimensions)</li>
+                <li>Similar meaning → similar vectors → enables semantic search</li>
+            </ul>
+            <p><strong>Popular models:</strong></p>
+            <ul>
+                <li><strong>OpenAI ada-002:</strong> 1536 dims, great quality, paid</li>
+                <li><strong>Sentence-BERT:</strong> Open source, various sizes</li>
+                <li><strong>Cohere Embed:</strong> Good multilingual support</li>
+                <li><strong>BGE / E5:</strong> Open source, competitive quality</li>
+            </ul>
+
+            <h3>3. Vector Store</h3>
+            <ul>
+                <li>Store embeddings for fast similarity search</li>
+                <li>Use approximate nearest neighbor (ANN) for speed</li>
+                <li>Options: ChromaDB, Pinecone, FAISS, Weaviate, Qdrant</li>
+            </ul>
+
+            <h3>4. Retrieval</h3>
+            <ul>
+                <li><strong>Dense retrieval:</strong> Embed query, find similar chunks</li>
+                <li><strong>Sparse retrieval:</strong> BM25 keyword matching</li>
+                <li><strong>Hybrid:</strong> Combine dense + sparse (often best)</li>
+                <li><strong>Top-K:</strong> Retrieve 3-10 most relevant chunks</li>
+            </ul>
+
+            <h3>5. Reranking (Optional but Recommended)</h3>
+            <ul>
+                <li>Rerank retrieved chunks using cross-encoder</li>
+                <li>More accurate than embedding similarity alone</li>
+                <li>Options: Cohere Rerank, sentence-transformers cross-encoders</li>
+            </ul>
+
+            <h3>6. Generation</h3>
+            <ul>
+                <li>Feed retrieved context + query to LLM</li>
+                <li>Prompt engineering crucial for quality</li>
+                <li>Include instructions to only use provided context</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>💻 Code Examples</h2>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Complete RAG Pipeline with LangChain</span>
+                </div>
+                <pre><code>from langchain.document_loaders import PyPDFLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.embeddings import OpenAIEmbeddings
+from langchain.vectorstores import Chroma
+from langchain.chat_models import AzureChatOpenAI
+from langchain.chains import RetrievalQA
+
+# 1. Load documents
+loader = PyPDFLoader("breakdown_manual.pdf")
+documents = loader.load()
+
+# 2. Chunk documents
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=1000,
+    chunk_overlap=200,
+    separators=["\n\n", "\n", " ", ""]
+)
+chunks = text_splitter.split_documents(documents)
+print(f"Created {len(chunks)} chunks")
+
+# 3. Create embeddings and store
+embeddings = OpenAIEmbeddings()
+vectorstore = Chroma.from_documents(
+    documents=chunks,
+    embedding=embeddings,
+    persist_directory="./chroma_db"
+)
+
+# 4. Create retriever
+retriever = vectorstore.as_retriever(
+    search_type="similarity",
+    search_kwargs={"k": 5}
+)
+
+# 5. Create QA chain
+llm = AzureChatOpenAI(
+    deployment_name="gpt-4",
+    temperature=0
+)
+
+qa_chain = RetrievalQA.from_chain_type(
+    llm=llm,
+    chain_type="stuff",  # Stuff all docs into context
+    retriever=retriever,
+    return_source_documents=True
+)
+
+# 6. Query
+result = qa_chain({"query": "How to fix motor overheating?"})
+print(result["result"])
+print(f"Sources: {len(result['source_documents'])}")</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Hybrid Search (Dense + Sparse)</span>
+                </div>
+                <pre><code>from langchain.retrievers import BM25Retriever, EnsembleRetriever
+
+# Dense retriever (semantic)
+dense_retriever = vectorstore.as_retriever(search_kwargs={"k": 5})
+
+# Sparse retriever (keyword - BM25)
+bm25_retriever = BM25Retriever.from_documents(chunks)
+bm25_retriever.k = 5
+
+# Hybrid: combine both with weights
+ensemble_retriever = EnsembleRetriever(
+    retrievers=[dense_retriever, bm25_retriever],
+    weights=[0.6, 0.4]  # 60% semantic, 40% keyword
+)
+
+# Use hybrid retriever
+docs = ensemble_retriever.get_relevant_documents(
+    "motor overheating troubleshooting"
+)
+
+# Why hybrid works better:
+# - Dense: catches semantic similarity ("hot" matches "overheating")
+# - Sparse: catches exact keywords ("motor", "model XYZ123")</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Reranking for Better Relevance</span>
+                </div>
+                <pre><code>from sentence_transformers import CrossEncoder
+
+# Initialize cross-encoder for reranking
+reranker = CrossEncoder('cross-encoder/ms-marco-MiniLM-L-6-v2')
+
+def retrieve_and_rerank(query, retriever, top_k=10, final_k=3):
+    """
+    Two-stage retrieval:
+    1. Get top_k from vector search (fast but approximate)
+    2. Rerank with cross-encoder (slow but accurate)
+    """
+    # Stage 1: Initial retrieval
+    docs = retriever.get_relevant_documents(query)[:top_k]
+    
+    # Stage 2: Rerank
+    pairs = [[query, doc.page_content] for doc in docs]
+    scores = reranker.predict(pairs)
+    
+    # Sort by rerank score
+    doc_scores = list(zip(docs, scores))
+    doc_scores.sort(key=lambda x: x[1], reverse=True)
+    
+    # Return top final_k
+    return [doc for doc, score in doc_scores[:final_k]]
+
+# Usage
+reranked_docs = retrieve_and_rerank(
+    "How to calibrate the pressure sensor?",
+    retriever,
+    top_k=10,
+    final_k=3
+)</code></pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🎤 Interview Questions & Answers</h2>
+
+            <div class="qa-list">
+                <div class="qa-item" data-index="0">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>What is RAG and why is it useful?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>RAG (Retrieval-Augmented Generation) grounds LLM responses in external knowledge by:</p>
+                        <ol>
+                            <li>Retrieving relevant documents for a query</li>
+                            <li>Feeding those documents as context to the LLM</li>
+                            <li>Generating response based on retrieved context</li>
+                        </ol>
+                        <p><strong>Benefits:</strong></p>
+                        <ul>
+                            <li><strong>Reduces hallucination:</strong> LLM answers from actual documents</li>
+                            <li><strong>Up-to-date:</strong> Just update document store, no retraining</li>
+                            <li><strong>Transparent:</strong> Can cite sources</li>
+                            <li><strong>Cost-effective:</strong> Cheaper than fine-tuning</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="1">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>How do you choose chunk size?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>Trade-off between context and noise:</p>
+                        <ul>
+                            <li><strong>Too small:</strong> Loses context, retrieves incomplete information</li>
+                            <li><strong>Too large:</strong> Retrieves irrelevant content, wastes tokens</li>
+                        </ul>
+                        <p><strong>Guidelines:</strong></p>
+                        <ul>
+                            <li>Start with 500-1000 tokens, 10-20% overlap</li>
+                            <li>Match chunk size to typical question scope</li>
+                            <li>Technical docs: smaller chunks (specific procedures)</li>
+                            <li>Narrative: larger chunks (maintain flow)</li>
+                            <li><strong>Test empirically:</strong> Evaluate retrieval quality at different sizes</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="2">
+                    <div class="qa-question">
+                        <span class="q-icon">Q3</span>
+                        <span>What is hybrid search and why use it?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>Hybrid search combines dense (semantic) and sparse (keyword) retrieval:</p>
+                        <ul>
+                            <li><strong>Dense:</strong> Understands meaning ("car" matches "automobile")</li>
+                            <li><strong>Sparse (BM25):</strong> Exact matches (product codes, names)</li>
+                        </ul>
+                        <p><strong>Why hybrid works better:</strong></p>
+                        <ul>
+                            <li>Dense alone misses exact keyword matches</li>
+                            <li>Sparse alone misses semantic similarity</li>
+                            <li>Combined: robust across query types</li>
+                        </ul>
+                        <p>Typical weights: 60-70% dense, 30-40% sparse.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="3">
+                    <div class="qa-question">
+                        <span class="q-icon">Q4</span>
+                        <span>How do you prevent hallucinations in RAG?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Constrain to context:</strong> "Only use information from the provided
+                                documents"</li>
+                            <li><strong>Require citations:</strong> Ask LLM to cite sources for each claim</li>
+                            <li><strong>Lower temperature:</strong> 0-0.3 for factual answers</li>
+                            <li><strong>Confidence thresholds:</strong> If retrieval scores are low, say "I don't know"
+                            </li>
+                            <li><strong>Reranking:</strong> Ensure retrieved docs are actually relevant</li>
+                            <li><strong>Evaluation:</strong> Use RAGAS faithfulness metric to measure hallucination</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="4">
+                    <div class="qa-question">
+                        <span class="q-icon">Q5</span>
+                        <span>Describe your RAG implementation at Trident.</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer (Your Project):</strong></p>
+                        <p><strong>Problem:</strong> Operators spent hours diagnosing machine breakdowns, relying on
+                            tribal knowledge.</p>
+                        <p><strong>Solution - RAG over 5 years of breakdown logs:</strong></p>
+                        <ul>
+                            <li><strong>Data:</strong> 50K+ breakdown reports (noisy, multilingual)</li>
+                            <li><strong>Preprocessing:</strong> PII removal, language normalization</li>
+                            <li><strong>Chunking:</strong> By incident (each breakdown = 1 chunk)</li>
+                            <li><strong>Embedding:</strong> OpenAI ada-002 via Azure</li>
+                            <li><strong>Vector DB:</strong> ChromaDB (sufficient scale, easy deployment)</li>
+                            <li><strong>Retrieval:</strong> Hybrid search (semantic + machine code matching)</li>
+                            <li><strong>Generation:</strong> GPT-4 with structured output (issue, cause, solution)</li>
+                        </ul>
+                        <p><strong>Result:</strong> 30% reduction in resolution time, operators trust system due to
+                            explainable citations.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🔗 Related Topics</h2>
+            <div class="related-grid">
+                <a href="topic-vector-databases.html" class="related-link">
+                    <span class="related-icon">💾</span>
+                    <span>Vector Databases</span>
+                </a>
+                <a href="topic-prompt-engineering.html" class="related-link">
+                    <span class="related-icon">✍️</span>
+                    <span>Prompt Engineering</span>
+                </a>
+                <a href="topic-llm-guardrails.html" class="related-link">
+                    <span class="related-icon">🛡️</span>
+                    <span>LLM Guardrails</span>
+                </a>
+                <a href="topic-finetuning-vs-rag.html" class="related-link">
+                    <span class="related-icon">⚡</span>
+                    <span>Fine-tuning vs RAG</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

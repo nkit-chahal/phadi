@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loss Functions | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">📉</div>
+            <div class="topic-info">
+                <span class="topic-category">ML Fundamentals</span>
+                <h1 class="topic-title">Loss Functions</h1>
+                <p class="topic-subtitle">Choosing the right objective function for your ML task</p>
+            </div>
+        </header>
+
+        <!-- Quick Summary -->
+        <section class="content-card summary-card">
+            <h2>📌 Quick Summary</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">📈</span>
+                    <div>
+                        <strong>Regression</strong>
+                        <p>MSE (general), MAE (robust to outliers), Huber (best of both)</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🎯</span>
+                    <div>
+                        <strong>Classification</strong>
+                        <p>Cross-Entropy (standard), Focal Loss (imbalanced data)</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">📦</span>
+                    <div>
+                        <strong>Object Detection</strong>
+                        <p>IoU Loss, GIoU Loss, Focal Loss for class imbalance</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Regression Losses -->
+        <section class="content-card">
+            <h2>📈 Regression Loss Functions</h2>
+
+            <h3>Mean Squared Error (MSE / L2 Loss)</h3>
+            <div class="formula-box">
+                <code>MSE = (1/n) × Σ(yᵢ - ŷᵢ)²</code>
+            </div>
+            <ul>
+                <li><strong>When to use:</strong> General regression, differentiable everywhere</li>
+                <li><strong>Pros:</strong> Penalizes large errors heavily, smooth gradients</li>
+                <li><strong>Cons:</strong> Sensitive to outliers (squares them!)</li>
+            </ul>
+
+            <h3>Mean Absolute Error (MAE / L1 Loss)</h3>
+            <div class="formula-box">
+                <code>MAE = (1/n) × Σ|yᵢ - ŷᵢ|</code>
+            </div>
+            <ul>
+                <li><strong>When to use:</strong> When outliers are present</li>
+                <li><strong>Pros:</strong> Robust to outliers</li>
+                <li><strong>Cons:</strong> Gradient is constant (doesn't scale with error), not differentiable at 0</li>
+            </ul>
+
+            <h3>Huber Loss (Smooth L1)</h3>
+            <div class="formula-box">
+                <code>Huber = { ½(y-ŷ)² if |y-ŷ| ≤ δ, δ(|y-ŷ| - ½δ) otherwise }</code>
+            </div>
+            <ul>
+                <li><strong>When to use:</strong> Best of both MSE and MAE</li>
+                <li><strong>Pros:</strong> Robust to outliers, differentiable everywhere</li>
+                <li><strong>Cons:</strong> Extra hyperparameter δ to tune</li>
+            </ul>
+        </section>
+
+        <!-- Classification Losses -->
+        <section class="content-card">
+            <h2>🎯 Classification Loss Functions</h2>
+
+            <h3>Binary Cross-Entropy (Log Loss)</h3>
+            <div class="formula-box">
+                <code>BCE = -[y·log(ŷ) + (1-y)·log(1-ŷ)]</code>
+            </div>
+            <ul>
+                <li><strong>When to use:</strong> Binary classification (2 classes)</li>
+                <li><strong>Output:</strong> Sigmoid activation → probability [0, 1]</li>
+                <li>Heavily penalizes confident wrong predictions</li>
+            </ul>
+
+            <h3>Categorical Cross-Entropy</h3>
+            <div class="formula-box">
+                <code>CCE = -Σ yᵢ·log(ŷᵢ) over all classes</code>
+            </div>
+            <ul>
+                <li><strong>When to use:</strong> Multi-class classification (one-hot encoded)</li>
+                <li><strong>Output:</strong> Softmax activation → probability distribution</li>
+            </ul>
+
+            <h3>Sparse Categorical Cross-Entropy</h3>
+            <ul>
+                <li>Same as CCE but labels are integer indices (not one-hot)</li>
+                <li>More memory efficient for many classes</li>
+            </ul>
+
+            <h3>Focal Loss</h3>
+            <div class="formula-box">
+                <code>FL = -αₜ(1-pₜ)^γ·log(pₜ)</code>
+            </div>
+            <ul>
+                <li><strong>When to use:</strong> Highly imbalanced datasets, object detection</li>
+                <li><strong>How it works:</strong> Down-weights easy examples, focuses on hard negatives</li>
+                <li><strong>γ (gamma):</strong> Focusing parameter (typically 2)</li>
+                <li><strong>α (alpha):</strong> Class balancing weight</li>
+                <li>Used in RetinaNet for object detection</li>
+            </ul>
+        </section>
+
+        <!-- Code Examples -->
+        <section class="content-card">
+            <h2>💻 Code Examples</h2>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Regression Losses in PyTorch</span>
+                </div>
+                <pre><code>import torch
+import torch.nn as nn
+
+# Sample data
+y_true = torch.tensor([3.0, 5.0, 2.5, 7.0])
+y_pred = torch.tensor([2.5, 5.5, 2.0, 8.0])
+
+# MSE Loss
+mse_loss = nn.MSELoss()
+print(f"MSE: {mse_loss(y_pred, y_true):.4f}")
+
+# MAE Loss (L1)
+mae_loss = nn.L1Loss()
+print(f"MAE: {mae_loss(y_pred, y_true):.4f}")
+
+# Huber Loss (Smooth L1)
+huber_loss = nn.SmoothL1Loss()
+print(f"Huber: {huber_loss(y_pred, y_true):.4f}")
+
+# Custom Huber with delta
+def custom_huber(y_true, y_pred, delta=1.0):
+    error = torch.abs(y_true - y_pred)
+    quadratic = torch.clamp(error, max=delta)
+    linear = error - quadratic
+    return torch.mean(0.5 * quadratic**2 + delta * linear)</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Classification Losses in TensorFlow/Keras</span>
+                </div>
+                <pre><code>import tensorflow as tf
+from tensorflow.keras.losses import (
+    BinaryCrossentropy,
+    CategoricalCrossentropy,
+    SparseCategoricalCrossentropy
+)
+
+# Binary Classification
+bce = BinaryCrossentropy()
+y_true_binary = [1, 0, 1, 1]
+y_pred_binary = [0.9, 0.1, 0.8, 0.7]
+print(f"BCE: {bce(y_true_binary, y_pred_binary):.4f}")
+
+# Multi-class (one-hot)
+cce = CategoricalCrossentropy()
+y_true_onehot = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+y_pred_probs = [[0.9, 0.05, 0.05], [0.1, 0.8, 0.1], [0.2, 0.2, 0.6]]
+print(f"CCE: {cce(y_true_onehot, y_pred_probs):.4f}")
+
+# Multi-class (integer labels) - more memory efficient
+scce = SparseCategoricalCrossentropy()
+y_true_int = [0, 1, 2]  # Class indices
+print(f"Sparse CCE: {scce(y_true_int, y_pred_probs):.4f}")</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Focal Loss Implementation</span>
+                </div>
+                <pre><code>import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class FocalLoss(nn.Module):
+    """
+    Focal Loss for imbalanced classification.
+    Used in object detection (RetinaNet) and imbalanced datasets.
+    """
+    def __init__(self, alpha=0.25, gamma=2.0):
+        super().__init__()
+        self.alpha = alpha  # Class weight
+        self.gamma = gamma  # Focusing parameter
+    
+    def forward(self, inputs, targets):
+        # inputs: logits, targets: class labels
+        bce_loss = F.binary_cross_entropy_with_logits(
+            inputs, targets, reduction='none'
+        )
+        
+        # Get probabilities
+        p = torch.sigmoid(inputs)
+        p_t = p * targets + (1 - p) * (1 - targets)
+        
+        # Apply focal weight
+        focal_weight = (1 - p_t) ** self.gamma
+        
+        # Apply alpha weight
+        alpha_t = self.alpha * targets + (1 - self.alpha) * (1 - targets)
+        
+        focal_loss = alpha_t * focal_weight * bce_loss
+        return focal_loss.mean()
+
+# Usage
+focal = FocalLoss(alpha=0.25, gamma=2.0)
+logits = torch.tensor([0.5, -1.0, 2.0])
+targets = torch.tensor([1.0, 0.0, 1.0])
+print(f"Focal Loss: {focal(logits, targets):.4f}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Interview Questions -->
+        <section class="content-card">
+            <h2>🎤 Interview Questions & Answers</h2>
+
+            <div class="qa-list">
+                <div class="qa-item" data-index="0">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>When would you use MAE over MSE?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>Use MAE when:</p>
+                        <ul>
+                            <li><strong>Outliers are present:</strong> MAE is robust because it doesn't square errors
+                            </li>
+                            <li><strong>Errors should be weighted equally:</strong> A $10 error is 10x worse than $1
+                                error (not 100x)</li>
+                            <li><strong>Interpretability matters:</strong> MAE is in the same units as the target</li>
+                        </ul>
+                        <p>Use MSE when:</p>
+                        <ul>
+                            <li>Large errors are particularly bad and should be heavily penalized</li>
+                            <li>You need smooth gradients everywhere (MSE is differentiable at 0)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="1">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>Why use Focal Loss in object detection?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>Object detection has extreme class imbalance - most anchor boxes are background (negative),
+                            very few contain objects (positive).</p>
+                        <ul>
+                            <li><strong>Problem:</strong> Easy negatives dominate training, overwhelming the gradient
+                            </li>
+                            <li><strong>Solution:</strong> Focal Loss down-weights easy examples using (1-p)^γ term</li>
+                            <li>When γ=2 and p=0.9 (easy example), weight is 0.01 (almost ignored)</li>
+                            <li>When p=0.5 (hard example), weight is 0.25 (still contributes)</li>
+                        </ul>
+                        <p>This allows the model to focus on hard-to-classify examples.</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="2">
+                    <div class="qa-question">
+                        <span class="q-icon">Q3</span>
+                        <span>What's the difference between Categorical and Sparse Categorical Cross-Entropy?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Categorical:</strong> Labels are one-hot encoded [0, 0, 1, 0]</li>
+                            <li><strong>Sparse Categorical:</strong> Labels are integers [2]</li>
+                        </ul>
+                        <p>They compute the same loss, but Sparse is more memory-efficient for datasets with many
+                            classes (like ImageNet with 1000 classes).</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="3">
+                    <div class="qa-question">
+                        <span class="q-icon">Q4</span>
+                        <span>In your defect detection project, what loss did you use and why?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer (Personalized for Ankit):</strong></p>
+                        <p>In my YOLOv5 defect detection at Lincode:</p>
+                        <ul>
+                            <li><strong>Classification Loss:</strong> BCE with class weights to handle rare defect types
+                            </li>
+                            <li><strong>Box Regression:</strong> CIoU Loss for better bounding box regression</li>
+                            <li><strong>Objectness:</strong> BCE to predict if anchor contains object</li>
+                        </ul>
+                        <p>For rare defect classes, I also experimented with Focal Loss (γ=2) which improved recall on
+                            minority classes by 15%.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Decision Guide -->
+        <section class="content-card">
+            <h2>🧭 Loss Function Decision Guide</h2>
+            <div class="diagram-box">
+                <pre>
+            ┌─────────────────┐
+            │   What's your   │
+            │      task?      │
+            └────────┬────────┘
+                     │
+        ┌────────────┼────────────┐
+        ▼            ▼            ▼
+   Regression   Classification  Detection
+        │            │            │
+        │            │            └── IoU + Focal Loss
+        │            │
+   ┌────┴────┐   ┌───┴───┐
+   │ Outliers? │   │ Classes? │
+   └────┬────┘   └───┬───┘
+    Yes │ No      2  │  >2
+        ▼  ▼         ▼    ▼
+      MAE MSE      BCE   CCE
+       or              (or Sparse)
+     Huber
+                 ┌────────────┐
+                 │ Imbalanced? │
+                 └─────┬──────┘
+                   Yes │
+                       ▼
+                  Focal Loss
+                  or Weights
+                </pre>
+            </div>
+        </section>
+
+        <!-- Related Topics -->
+        <section class="content-card">
+            <h2>🔗 Related Topics</h2>
+            <div class="related-grid">
+                <a href="topic-bias-variance.html" class="related-link">
+                    <span class="related-icon">⚖️</span>
+                    <span>Bias-Variance Tradeoff</span>
+                </a>
+                <a href="topic-optimizers.html" class="related-link">
+                    <span class="related-icon">🔄</span>
+                    <span>Optimizers</span>
+                </a>
+                <a href="topic-evaluation-metrics.html" class="related-link">
+                    <span class="related-icon">📊</span>
+                    <span>Evaluation Metrics</span>
+                </a>
+                <a href="topic-imbalanced-data.html" class="related-link">
+                    <span class="related-icon">⚖️</span>
+                    <span>Imbalanced Data</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

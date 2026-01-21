@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imbalanced Data | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">⚖️</div>
+            <div class="topic-info">
+                <span class="topic-category">ML Fundamentals</span>
+                <h1 class="topic-title">Imbalanced Data</h1>
+                <p class="topic-subtitle">Techniques for handling skewed class distributions</p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 Quick Summary</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">📈</span>
+                    <div>
+                        <strong>Oversampling (SMOTE)</strong>
+                        <p>Create synthetic minority samples. Risk: overfitting to synthetic data.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">📉</span>
+                    <div>
+                        <strong>Undersampling</strong>
+                        <p>Remove majority samples. Risk: lose information.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">⚖️</span>
+                    <div>
+                        <strong>Class Weights</strong>
+                        <p>Penalize majority class errors more. Clean, no data manipulation.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>📖 Techniques Overview</h2>
+
+            <h3>1. Oversampling</h3>
+            <ul>
+                <li><strong>Random Oversampling:</strong> Duplicate minority samples (can overfit)</li>
+                <li><strong>SMOTE:</strong> Create synthetic samples by interpolating between nearest neighbors</li>
+                <li><strong>ADASYN:</strong> Focus on hard-to-learn samples</li>
+            </ul>
+
+            <h3>2. Undersampling</h3>
+            <ul>
+                <li><strong>Random Undersampling:</strong> Remove majority samples (loses information)</li>
+                <li><strong>Tomek Links:</strong> Remove majority samples close to decision boundary</li>
+                <li><strong>NearMiss:</strong> Keep majority samples closest to minority</li>
+            </ul>
+
+            <h3>3. Class Weights</h3>
+            <ul>
+                <li>Assign higher loss penalty to minority class</li>
+                <li>weight = n_samples / (n_classes × n_samples_per_class)</li>
+                <li>Clean solution, no data manipulation</li>
+            </ul>
+
+            <h3>4. Specialized Loss Functions</h3>
+            <ul>
+                <li><strong>Focal Loss:</strong> Down-weights easy examples, focuses on hard ones</li>
+                <li>γ=2 is typical, higher γ = more focus on hard examples</li>
+            </ul>
+
+            <h3>5. Threshold Adjustment</h3>
+            <ul>
+                <li>Default threshold is 0.5 for binary classification</li>
+                <li>Lower threshold increases recall (catch more positives)</li>
+                <li>Use precision-recall curve to find optimal threshold</li>
+            </ul>
+
+            <h3>6. Ensemble Methods</h3>
+            <ul>
+                <li><strong>BalancedBagging:</strong> Train each estimator on balanced subset</li>
+                <li><strong>EasyEnsemble:</strong> Create ensemble from undersampled datasets</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>💻 Code Examples</h2>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">SMOTE Oversampling</span>
+                </div>
+                <pre><code>from imblearn.over_sampling import SMOTE, ADASYN
+from collections import Counter
+
+print(f"Before: {Counter(y_train)}")
+# Output: Counter({0: 9000, 1: 100})
+
+# SMOTE - create synthetic minority samples
+smote = SMOTE(random_state=42)
+X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
+
+print(f"After SMOTE: {Counter(y_resampled)}")
+# Output: Counter({0: 9000, 1: 9000})
+
+# ADASYN - focus on hard samples
+adasyn = ADASYN(random_state=42)
+X_resampled, y_resampled = adasyn.fit_resample(X_train, y_train)
+
+# Important: Only apply to training data, NOT validation/test!</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Class Weights in Scikit-learn</span>
+                </div>
+                <pre><code>from sklearn.utils.class_weight import compute_class_weight
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
+
+# Automatic class weight computation
+class_weights = compute_class_weight(
+    class_weight='balanced',
+    classes=np.unique(y_train),
+    y=y_train
+)
+weight_dict = dict(zip(np.unique(y_train), class_weights))
+print(f"Class weights: {weight_dict}")
+# Output: {0: 0.52, 1: 4.95}  # Minority class weighted higher
+
+# Use in models
+rf = RandomForestClassifier(class_weight='balanced')
+lr = LogisticRegression(class_weight='balanced')
+
+# Manual weights
+custom_weights = {0: 1, 1: 10}  # 10x penalty for missing minority
+rf = RandomForestClassifier(class_weight=custom_weights)</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Class Weights in PyTorch</span>
+                </div>
+                <pre><code>import torch
+import torch.nn as nn
+
+# Calculate weights from class frequencies
+class_counts = [9000, 100]  # majority, minority
+total = sum(class_counts)
+weights = torch.tensor([total/c for c in class_counts])
+weights = weights / weights.sum()  # Normalize
+
+print(f"Weights: {weights}")
+# Output: tensor([0.011, 0.989])
+
+# Use in CrossEntropyLoss
+criterion = nn.CrossEntropyLoss(weight=weights)
+
+# For binary with BCEWithLogitsLoss
+pos_weight = torch.tensor([class_counts[0] / class_counts[1]])  # 90
+criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)</code></pre>
+            </div>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Threshold Optimization</span>
+                </div>
+                <pre><code>from sklearn.metrics import precision_recall_curve, f1_score
+
+# Get probability predictions
+y_proba = model.predict_proba(X_val)[:, 1]
+
+# Find optimal threshold for F1
+precisions, recalls, thresholds = precision_recall_curve(y_val, y_proba)
+f1_scores = 2 * (precisions * recalls) / (precisions + recalls + 1e-8)
+optimal_idx = np.argmax(f1_scores)
+optimal_threshold = thresholds[optimal_idx]
+
+print(f"Optimal threshold: {optimal_threshold:.3f}")
+print(f"F1 at optimal: {f1_scores[optimal_idx]:.3f}")
+
+# Use custom threshold for predictions
+y_pred_custom = (y_proba >= optimal_threshold).astype(int)</code></pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🎤 Interview Questions & Answers</h2>
+
+            <div class="qa-list">
+                <div class="qa-item" data-index="0">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>What is SMOTE and how does it work?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>SMOTE (Synthetic Minority Over-sampling Technique) creates synthetic samples for the minority
+                            class:</p>
+                        <ol>
+                            <li>For each minority sample, find k nearest neighbors (typically k=5)</li>
+                            <li>Randomly select one neighbor</li>
+                            <li>Create new sample along the line between original and neighbor</li>
+                            <li>new_sample = original + rand(0,1) × (neighbor - original)</li>
+                        </ol>
+                        <p><strong>Pros:</strong> Creates realistic samples, reduces overfitting vs random duplication
+                        </p>
+                        <p><strong>Cons:</strong> Can create noisy samples if minority is scattered, doesn't work well
+                            in high dimensions</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="1">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>When would you use class weights vs SMOTE?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p><strong>Use Class Weights when:</strong></p>
+                        <ul>
+                            <li>You want a clean, simple solution without data manipulation</li>
+                            <li>Working with neural networks (easier integration)</li>
+                            <li>Moderate imbalance (5:1 to 20:1)</li>
+                        </ul>
+                        <p><strong>Use SMOTE when:</strong></p>
+                        <ul>
+                            <li>Extreme imbalance (100:1+)</li>
+                            <li>You have enough minority samples for meaningful interpolation</li>
+                            <li>Tree-based models (work well with synthetic data)</li>
+                        </ul>
+                        <p>Often best to <strong>combine both</strong>!</p>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="2">
+                    <div class="qa-question">
+                        <span class="q-icon">Q3</span>
+                        <span>Should you apply SMOTE before or after train/test split?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer: ALWAYS AFTER the split!</strong></p>
+                        <p>Only apply SMOTE to training data, never to validation or test.</p>
+                        <p><strong>Why?</strong> If applied before split, synthetic samples might end up in test set,
+                            causing data leakage. Your test set should represent real-world distribution.</p>
+                        <pre>
+# Correct order:
+1. Split into train/val/test
+2. Apply SMOTE only to X_train, y_train
+3. Validate and test on original (imbalanced) data
+                        </pre>
+                    </div>
+                </div>
+
+                <div class="qa-item" data-index="3">
+                    <div class="qa-question">
+                        <span class="q-icon">Q4</span>
+                        <span>How did you handle imbalanced data in your projects?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer (Personalized for Ankit):</strong></p>
+                        <p>In my YOLOv5 defect detection at Lincode:</p>
+                        <ul>
+                            <li><strong>Problem:</strong> Some defect types had only 50 samples vs 2000+ for common
+                                types</li>
+                            <li><strong>Solutions used:</strong></li>
+                            <ul>
+                                <li>Class weights in loss function (per-class scaling)</li>
+                                <li>Heavy data augmentation (rotation, flip, color jitter)</li>
+                                <li>Focal loss to focus on hard examples</li>
+                                <li>Ensemble with different augmentation seeds</li>
+                            </ul>
+                            <li><strong>Result:</strong> Rare defect recall improved from 65% to 88%</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>🔗 Related Topics</h2>
+            <div class="related-grid">
+                <a href="topic-evaluation-metrics.html" class="related-link">
+                    <span class="related-icon">📊</span>
+                    <span>Evaluation Metrics</span>
+                </a>
+                <a href="topic-loss-functions.html" class="related-link">
+                    <span class="related-icon">📉</span>
+                    <span>Loss Functions (Focal)</span>
+                </a>
+                <a href="topic-data-splits.html" class="related-link">
+                    <span class="related-icon">✂️</span>
+                    <span>Data Splits</span>
+                </a>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

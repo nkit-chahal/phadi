@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Drift & PSI | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">📉</div>
+            <div class="topic-info">
+                <span class="topic-category">MLOps & Monitoring</span>
+                <h1 class="topic-title">Data Drift & PSI</h1>
+                <p class="topic-subtitle">Detecting when your model becomes stale in production</p>
+            </div>
+        </header>
+
+        <!-- Quick Summary -->
+        <section class="content-card summary-card">
+            <h2>📌 Quick Summary</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">📊</span>
+                    <div>
+                        <strong>Data Drift</strong>
+                        <p>Input distribution P(X) changes. "Users are younger now."</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🧠</span>
+                    <div>
+                        <strong>Concept Drift</strong>
+                        <p>Relationship P(Y|X) changes. "Same users, but they buy different things."</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">📐</span>
+                    <div>
+                        <strong>PSI (Population Stability Index)</strong>
+                        <p>Metric to quantify drift. PSI > 0.25 = Critical.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PSI Explanation -->
+        <section class="content-card">
+            <h2>📐 PSI (Population Stability Index)</h2>
+            <p>The industry standard for measuring distribution shift. It compares the distribution of a feature in
+                specific "buckets" (bins) between a reference population (training) and current population (production).
+            </p>
+
+            <div class="formula-box">
+                <code>PSI = Σ ( (Actual% - Expected%) × ln(Actual% / Expected%) )</code>
+            </div>
+
+            <div class="table-container">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>PSI Value</th>
+                            <th>Interpretation</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>&lt; 0.1</td>
+                            <td>No significant drift</td>
+                            <td>No action needed</td>
+                        </tr>
+                        <tr>
+                            <td>0.1 - 0.25</td>
+                            <td>Moderate drift</td>
+                            <td>Monitor closely</td>
+                        </tr>
+                        <tr>
+                            <td>&gt; 0.25</td>
+                            <td>Significant drift</td>
+                            <td><strong>Retrain model</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>How to Calculate PSI (Step-by-Step)</h3>
+            <ol>
+                <li>Divide the **Training Data** (Expected) into 10 equal buckets (deciles).</li>
+                <li>Apply same bucket boundaries to **Production Data** (Actual).</li>
+                <li>Calculate % of samples in each bucket for both.</li>
+                <li>Apply formula: <code>(A% - E%) * ln(A% / E%)</code> for each bucket.</li>
+                <li>Sum up all buckets.</li>
+            </ol>
+        </section>
+
+        <!-- Code Example -->
+        <section class="content-card">
+            <h2>💻 Python Implementation</h2>
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Calculating PSI from scratch</span>
+                </div>
+                <pre><code class="language-python">import numpy as np
+
+def calculate_psi(expected, actual, buckettype='bins', buckets=10, axis=0):
+    '''Calculate the PSI (Population Stability Index) for two arrays'''
+    
+    def psi(expected_array, actual_array, buckets):
+        def scale_range(input, min, max):
+            input += -(np.min(input))
+            input /= np.max(input) / (max - min)
+            input += min
+            return input
+
+        breakpoints = np.arange(0, buckets + 1) / (buckets) * 100
+
+        if buckettype == 'bins':
+            breakpoints = np.percentile(expected_array, breakpoints)
+        
+        expected_percents = np.histogram(expected_array, breakpoints)[0] / len(expected_array)
+        actual_percents = np.histogram(actual_array, breakpoints)[0] / len(actual_array)
+
+        # Avoid div by zero
+        expected_percents = np.where(expected_percents == 0, 0.0001, expected_percents)
+        actual_percents = np.where(actual_percents == 0, 0.0001, actual_percents)
+
+        psi_value = np.sum((actual_percents - expected_percents) * np.log(actual_percents / expected_percents))
+        return psi_value
+
+    return psi(expected, actual, buckets)
+
+# Usage
+train_ages = np.random.normal(30, 5, 1000)
+prod_ages = np.random.normal(35, 5, 1000)  # Drifted!
+
+psi_score = calculate_psi(train_ages, prod_ages)
+print(f"PSI Score: {psi_score:.4f}")
+# Output: PSI Score likely > 0.25 due to mean shift</code></pre>
+            </div>
+        </section>
+
+        <!-- Other Drift Methods -->
+        <section class="content-card">
+            <h2>🔍 Other Drift Detection Methods</h2>
+
+            <h3>1. KS Test (Kolmogorov-Smirnov)</h3>
+            <p>Statistical test to check if two samples come from the same distribution.</p>
+            <ul>
+                <li><strong>Null Hypothesis (H0):</strong> Distributions are same.</li>
+                <li>If p-value < 0.05, reject H0 → **Drift Detected**.</li>
+                <li>Good for numerical features.</li>
+            </ul>
+
+            <h3>2. KL Divergence (Kullback-Leibler)</h3>
+            <p>Measures how one probability distribution differs from a second, reference probability distribution. Not
+                symmetric (unlike JS Divergence).</p>
+
+            <h3>3. JS Divergence (Jensen-Shannon)</h3>
+            <p>Symmetric and smooth version of KL Divergence. Always between 0 and 1.</p>
+        </section>
+
+        <!-- Mark Complete -->
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deployment Patterns | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand"><span class="brand-icon">🚀</span><span class="brand-text">PrepHub</span></div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">🏗️</div>
+            <div class="topic-info">
+                <span class="topic-category">MLOps Strategies</span>
+                <h1 class="topic-title">Deployment Patterns</h1>
+                <p class="topic-subtitle">Safe strategies to roll out ML models to production</p>
+            </div>
+        </header>
+
+        <section class="content-card">
+            <h2>1. Blue/Green Deployment</h2>
+            <p><strong>Mechanism:</strong> Maintain two identical environments (Blue = Current, Green = New). Router
+                switches 100% traffic instantly.</p>
+            <ul>
+                <li><strong>Pros:</strong> Instant rollback (millisecond switch), clean cutover.</li>
+                <li><strong>Cons:</strong> Expensive (Double infrastructure cost). Warning: Database schema
+                    compatibility issues.</li>
+                <li><strong>Use Case:</strong> Critical services where downtime is unacceptable.</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>2. Canary Deployment</h2>
+            <p><strong>Mechanism:</strong> Roll out new model to a small subset of users (e.g., 5%) first. Monitor
+                metrics. Gradually increase to 100%.</p>
+            <ul>
+                <li><strong>Pros:</strong> Limits blast radius of bugs. Low risk.</li>
+                <li><strong>Cons:</strong> Slower rollout time. Need complex routing logic (sticky sessions).</li>
+                <li><strong>Use Case:</strong> Standard model updates where you want to verify performance on real
+                    traffic.</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>3. Shadow Deployment</h2>
+            <p><strong>Mechanism:</strong> Incoming request is sent to BOTH existing and new model. Only existing
+                model's response is returned to user. New model's response is logged for analysis.</p>
+            <ul>
+                <li><strong>Pros:</strong> ZERO risk to user. Best for testing accuracy/latency on real data.</li>
+                <li><strong>Cons:</strong> Double compute cost. No feedback on user reaction (CTR, conversions).</li>
+                <li><strong>Use Case:</strong> Major architecture changes (e.g., migrating from XGBoost to Deep
+                    Learning).</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>4. A/B Testing</h2>
+            <p><strong>Mechanism:</strong> Split traffic 50/50 (or similar) into "Control" (Old) and "Variant" (New).
+                Analyze statistical significance of business metrics (Conversion, Turn-rate).</p>
+            <ul>
+                <li><strong>Pros:</strong> Definitive proof of business value.</li>
+                <li><strong>Cons:</strong> Risk of losing revenue on the bad variant. Long duration to reach
+                    significance.</li>
+                <li><strong>Use Case:</strong> Optimizing business logic, UI changes, Recommendation algorithms.</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>📊 Comparison Table</h2>
+            <div class="table-container">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Strategy</th>
+                            <th>User Risk</th>
+                            <th>Cost</th>
+                            <th>Rollback Speed</th>
+                            <th>Main Goal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Blue/Green</strong></td>
+                            <td>Med</td>
+                            <td>High ($$$)</td>
+                            <td>Instant</td>
+                            <td>Reliability</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Canary</strong></td>
+                            <td>Low</td>
+                            <td>Low ($)</td>
+                            <td>Fast</td>
+                            <td>Safety</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Shadow</strong></td>
+                            <td>Zero</td>
+                            <td>High ($$)</td>
+                            <td>N/A</td>
+                            <td>Validation</td>
+                        </tr>
+                        <tr>
+                            <td><strong>A/B Test</strong></td>
+                            <td>Med</td>
+                            <td>Low ($)</td>
+                            <td>Slow</td>
+                            <td>Business Metrics</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+    <script src="topic.js"></script>
+</body>
+
+</html>

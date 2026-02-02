@@ -76,6 +76,51 @@ const dsaProblems = {
         { id: 56, title: "Consecutive Numbers", difficulty: "medium", leetcode: 180 },
         { id: 57, title: "Delete Duplicate Emails", difficulty: "easy", leetcode: 196 },
         { id: 58, title: "Rising Temperature", difficulty: "easy", leetcode: 197 }
+    ],
+    pandas: [
+        { id: 101, title: "Create Dataframe from Dictionary", difficulty: "easy", leetcode: 2877 },
+        { id: 102, title: "Select Data", difficulty: "easy", leetcode: 2880 },
+        { id: 103, title: "Drop Duplicate Rows", difficulty: "easy", leetcode: 2882 },
+        { id: 104, title: "Drop Missing Data", difficulty: "easy", leetcode: 2883 },
+        { id: 105, title: "Modify Columns (Vectorized)", difficulty: "easy", leetcode: 2884 },
+        { id: 106, title: "Rename Columns", difficulty: "easy", leetcode: 2885 },
+        { id: 107, title: "Pivot Table", difficulty: "medium", leetcode: 2889 },
+        { id: 108, title: "Melt", difficulty: "medium", leetcode: 2890 },
+        { id: 109, title: "Method Chaining", difficulty: "medium", leetcode: 2891 },
+        { id: 110, title: "Time Delta / Resample", difficulty: "medium", leetcode: 9991 }
+    ],
+    numpy: [
+        { id: 201, title: "Array Creation & Reshape", difficulty: "easy", leetcode: 9001 },
+        { id: 202, title: "Broadcasting Operations", difficulty: "medium", leetcode: 9002 },
+        { id: 203, title: "Matrix Multiplication", difficulty: "medium", leetcode: 9003 },
+        { id: 204, title: "Fancy Indexing", difficulty: "medium", leetcode: 9004 },
+        { id: 205, title: "Argmax / Argmin", difficulty: "easy", leetcode: 9005 },
+        { id: 206, title: "Stacking & Concatenation", difficulty: "medium", leetcode: 9006 },
+        { id: 207, title: "Vectorizaton Speed Test", difficulty: "hard", leetcode: 9007 }
+    ],
+    linkedlist: [
+        { id: 301, title: "Reverse Linked List", difficulty: "easy", leetcode: 206 },
+        { id: 302, title: "Merge Two Sorted Lists", difficulty: "easy", leetcode: 21 },
+        { id: 303, title: "Linked List Cycle", difficulty: "easy", leetcode: 141 },
+        { id: 304, title: "Remove Nth Node From End", difficulty: "medium", leetcode: 19 },
+        { id: 305, title: "Reorder List", difficulty: "medium", leetcode: 143 }
+    ],
+    graphs: [
+        { id: 401, title: "Number of Islands", difficulty: "medium", leetcode: 200 },
+        { id: 402, title: "Max Area of Island", difficulty: "medium", leetcode: 695 },
+        { id: 403, title: "Clone Graph", difficulty: "medium", leetcode: 133 },
+        { id: 404, title: "Rotting Oranges", difficulty: "medium", leetcode: 994 },
+        { id: 405, title: "Pacific Atlantic Water Flow", difficulty: "medium", leetcode: 417 },
+        { id: 406, title: "Course Schedule", difficulty: "medium", leetcode: 207 },
+        { id: 407, title: "Network Delay Time (Dijkstra)", difficulty: "medium", leetcode: 743 }
+    ],
+    heaps: [
+        { id: 501, title: "Kth Largest Element in Array", difficulty: "medium", leetcode: 215 },
+        { id: 502, title: "Last Stone Weight", difficulty: "easy", leetcode: 1046 },
+        { id: 503, title: "K Closest Points to Origin", difficulty: "medium", leetcode: 973 },
+        { id: 504, title: "Task Scheduler", difficulty: "medium", leetcode: 621 },
+        { id: 505, title: "Find Median from Data Stream", difficulty: "hard", leetcode: 295 },
+        { id: 506, title: "Merge K Sorted Lists", difficulty: "hard", leetcode: 23 }
     ]
 };
 
@@ -131,6 +176,24 @@ const mlConcepts = [
         title: "Feature Engineering",
         description: "Normalization, encoding, binning, feature crossing. Domain knowledge matters.",
         topicPage: "topic-feature-engineering.html"
+    },
+    {
+        icon: "🧬",
+        title: "Clustering & PCA",
+        description: "Unsupervised learning. K-Means, DBSCAN, Hierarchical. PCA for dim reduction.",
+        topicPage: "topic-clustering-pca.html"
+    },
+    {
+        icon: "🌲",
+        title: "Ensemble Methods",
+        description: "Bagging (Random Forest) vs Boosting (XGBoost, LightGBM). Bias-variance reduction.",
+        topicPage: "topic-ensemble.html"
+    },
+    {
+        icon: "📈",
+        title: "Activation Functions",
+        description: "Sigmoid, Tanh, ReLU, LeakyReLU, GELU, Swish. Vanishing gradient solutions.",
+        topicPage: "topic-activation.html"
     }
 ];
 
@@ -288,6 +351,77 @@ const systemDesignTopics = [
             "Stream processing for real-time",
             "Data quality & monitoring"
         ]
+    },
+    {
+        icon: "🐳",
+        title: "Docker & Containers",
+        content: "Reproducibility in ML. Containerize training & inference.",
+        topicPage: "topic-docker-mlops.html",
+        points: [
+            "Dockerfile best practices (multi-stage)",
+            "Docker Compose for local dev",
+            "Optimizing image size (distroless, slim)",
+            "K8s basics (Pods, Deployments)"
+        ]
+    },
+    {
+        icon: "📉",
+        title: "Data Drift & Monitoring",
+        content: "Post-deployment monitoring. Detecting when model degrades.",
+        topicPage: "topic-data-drift.html",
+        points: [
+            "Data Drift (Input distribution change)",
+            "Concept Drift (P(Y|X) changes)",
+            "Population Stability Index (PSI)",
+            "KS Test, KL Divergence"
+        ]
+    },
+    {
+        icon: "♾️",
+        title: "CI/CD for ML",
+        content: "Continuous Integration & Deployment concepts.",
+        topicPage: "topic-docker-mlops.html", // Reusing docker page for broad MLOps
+        points: [
+            "Automated retraining triggers",
+            "Model registry integration",
+            "Canary vs Shadow deployment",
+            "GitHub Actions pipelines"
+        ]
+    },
+    {
+        icon: "⚡",
+        title: "LLM Inference",
+        content: "Optimizing Large Language Models for production.",
+        topicPage: "topic-llm-inference.html",
+        points: ["QLoRA & Quantization", "vLLM & PagedAttention", "FlashAttention"]
+    },
+    {
+        icon: "🏗️",
+        title: "Deployment Patterns",
+        content: "Strategies for safe model rollout.",
+        topicPage: "topic-deployment-patterns.html",
+        points: ["Blue/Green Deployment", "Canary Rollouts", "Shadow Deployment", "A/B Testing"]
+    },
+    {
+        icon: "🧪",
+        title: "ML Testing",
+        content: "Quality assurance for data and models.",
+        topicPage: "topic-ml-testing.html",
+        points: ["Data Validation (Schema)", "Model Integrity", "Performance on Golden Sets"]
+    },
+    {
+        icon: "🏪",
+        title: "Feature Stores",
+        content: "Syncing training and serving data.",
+        topicPage: "topic-feature-stores.html",
+        points: ["Offline vs Online Store", "Training-Serving Skew", "Point-in-time correctness"]
+    },
+    {
+        icon: "☸️",
+        title: "Kubernetes for ML",
+        content: "Orchestration fundamentals.",
+        topicPage: "topic-kubernetes-ml.html",
+        points: ["Pods & Nodes", "Services & Ingress", "Deployments vs StatefulSets"]
     }
 ];
 
@@ -364,7 +498,34 @@ const flashcards = [
     { q: "How to handle imbalanced data?", a: "SMOTE, undersampling, class weights, focal loss, threshold tuning. Often combine multiple techniques." },
     { q: "What is the purpose of validation set?", a: "Hyperparameter tuning without overfitting to test set. Test set is for final unbiased evaluation only." },
     { q: "Explain chunking in RAG?", a: "Split documents into smaller pieces. Balance: too small = lost context, too large = noise. 500-1000 tokens typical." },
-    { q: "Fine-tuning vs RAG - when to use which?", a: "Fine-tune for custom output style. RAG for knowledge that changes. Often combine both." }
+    { q: "Fine-tuning vs RAG - when to use which?", a: "Fine-tune for custom output style. RAG for knowledge that changes. Often combine both." },
+    { q: "Difference between fit(), transform(), fit_transform()?", a: "fit() calculates params (mean/std), transform() applies them. fit_transform() does both (more efficient). Use fit() on train only!" },
+    { q: "What is PSI (Population Stability Index)?", a: "Measure of how much a population has shifted over time. PSI < 0.1 stable, > 0.25 major drift." },
+    { q: "Random Forest vs XGBoost?", a: "RF (Bagging) reduces variance, runs parallel. XGB (Boosting) reduces bias, runs sequential, usually higher performance." },
+    { q: "Why use Docker for ML?", a: "Reproducibility. 'It works on my machine' solver. Consistent environment from dev to prod." },
+    { q: "BFS vs DFS usage?", a: "BFS: Shortest path in unweighted graphs. DFS: Exhaustive search, cycle detection, topological sort." },
+    { q: "What causes Vanishing Gradient?", a: "Deep networks with activation functions < 1 (sigmoid/tanh). Gradients multiply and shrink to 0. Fix: ReLU, ResNets." },
+    // MLOps & Advanced
+    { q: "What is the difference between QLoRA and LoRA?", a: "LoRA trains adapters on frozen FP16 weights. QLoRA quantizes base model to 4-bit (NF4) to save VRAM, while keeping adapters in FP16." },
+    { q: "How does vLLM increase throughput?", a: "PagedAttention. Manages KV cache memory in non-contiguous pages like OS virtual memory, reducing fragmentation and waste." },
+    { q: "Explain Blue/Green Deployment.", a: "Two identical environments. Router switches 100% traffic from Blue (Old) to Green (New) instantly. Fast rollback, expensive (2x resources)." },
+    { q: "Explain Canary Deployment.", a: "Send small % of traffic (e.g., 5%) to new version. Monitor metrics. Gradually increase. Low risk, slow rollout." },
+    { q: "What is a Feature Store?", a: "Centralized value store ensuring feature consistency between offline training (Batch) and online serving (Real-time). Solves training-serving skew." },
+    { q: "What is Speculative Decoding?", a: "Draft model (small) generated tokens quickly; Target model (large) verifies them in parallel. Accelerates inference without quality loss." },
+    { q: "Role of 'Service' in Kubernetes?", a: "Provides a stable internal IP address and load balancing for a set of ephemeral Pods." },
+    { q: "What is Model Drift vs Data Drift?", a: "Data Drift: Input distribution changes (P(X)). Model/Concept Drift: Relationship between Input/Output changes (P(Y|X))." },
+    { q: "Why use FlashAttention?", a: "Optimizes GPU memory IO (tiling). Reduces memory access overhead (HBM), making attention calculation much faster and memory-efficient." },
+    { q: "What is Shadow Deployment?", a: "New model receives production traffic in parallel but output is ignored (logged for comparison). Zero user risk." },
+    { q: "Difference between Batch vs Online inference?", a: "Batch: High latency, high throughput, pre-computed (Cost efficient). Online: Low latency, single request, on-demand (Costly)." },
+    { q: "What are the 3 stages of ML Testing?", a: "1. Data Tests (Schema/Nulls). 2. Model Integrity (Shape/NaNs). 3. Performance/Behavioral (Accuracy on Golden Set/Bias)." },
+    { q: "What is GPTQ/AWQ?", a: "Post-Training Quantization (PTQ) methods optimized for efficient inference on GPUs. Often faster decoding than bitsandbytes." },
+    { q: "Why use ONNX?", a: "Interoperability. Train in PyTorch, deploy in C++, Java, or JS. Optimized runtimes (ONNX Runtime) often faster than native frameworks." },
+    { q: "What is a Model Registry?", a: "Version control for artifacts (weights). Tracks lineage, metrics, and stage (Staging/Prod). Git is for code, Registry is for binaries (MLflow)." },
+    { q: "Pros/Cons of Microservices for ML?", a: "Pros: Independent scaling, tech stack freedom. Cons: Network latency, complex orchestration/debugging." },
+    { q: "How to handle Cold Start in Recommenders?", a: "Use content-based filtering (user meta), popular items, or bandits until interaction history is built." },
+    { q: "What is 'Training-Serving Skew'?", a: "Performance drop in production due to differences in data processing or environment between training and serving." },
+    { q: "What is Distillation?", a: "Student model (small) learns to mimic probability distribution of Teacher model (large). Preserves knowledge with less compute." },
+    { q: "Explain 'PagedAttention' simply.", a: "Like Tetris for memory. Instead of reserving big empty blocks for text generation, it fills small gaps dynamically. Allows more users at once." }
 ];
 
 // ==========================================

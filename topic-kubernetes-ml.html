@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kubernetes (K8s) for ML | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand"><span class="brand-icon">🚀</span><span class="brand-text">PrepHub</span></div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">☸️</div>
+            <div class="topic-info">
+                <span class="topic-category">Infrastructure</span>
+                <h1 class="topic-title">Kubernetes (K8s) Fundamentals</h1>
+                <p class="topic-subtitle">Orchestrating containerized ML applications at scale</p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 Why K8s?</h2>
+            <p>Docker runs containers. Kubernetes manages ("orchestrates") them. It handles scaling, self-healing
+                (restarting crashed containers), and networking.</p>
+        </section>
+
+        <section class="content-card">
+            <h2>1. Architecture Components</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">📦</span>
+                    <div>
+                        <strong>Pod</strong>
+                        <p>The atomic unit. A wrapper around one or more containers. "A Pod is a single instance of your
+                            app".</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🖥️</span>
+                    <div>
+                        <strong>Node</strong>
+                        <p>The worker machine (VM or Bare metal) where Pods run.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🎮</span>
+                    <div>
+                        <strong>Deployment</strong>
+                        <p>Controller that manages Pods. "I want 3 replicas of this Pod". It creates and monitors them.
+                        </p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🌐</span>
+                    <div>
+                        <strong>Service</strong>
+                        <p>Stable Network Interface. Pods die and change IPs; Service provides a static IP to talk to
+                            them.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>2. K8s Manifests (YAML)</h2>
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">YAML</span>
+                    <span class="code-title">ml-deployment.yaml</span>
+                </div>
+                <pre><code class="language-yaml"># 1. Deployment: Runs the App
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ml-model-v1
+spec:
+  replicas: 3  # Run 3 copies
+  selector:
+    matchLabels:
+      app: fraud-detection
+  template:
+    metadata:
+      labels:
+        app: fraud-detection
+    spec:
+      containers:
+      - name: model-container
+        image: my-registry/fraud-model:1.0
+        ports:
+        - containerPort: 8000
+        resources:
+          limits:
+            memory: "2Gi"
+            cpu: "1"
+---
+# 2. Service: Exposes the App
+apiVersion: v1
+kind: Service
+metadata:
+  name: ml-service
+spec:
+  selector:
+    app: fraud-detection
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8000
+  type: ClusterIP  # Internal only</code></pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>3. Common Commands</h2>
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Bash</span>
+                    <span class="code-title">kubectl cheatsheet</span>
+                </div>
+                <pre><code class="language-bash"># Apply configuration
+kubectl apply -f ml-deployment.yaml
+
+# Check status
+kubectl get pods
+kubectl get services
+
+# View logs (debugging)
+kubectl logs ml-model-v1-xxxxx
+
+# Enter container shell
+kubectl exec -it ml-model-v1-xxxxx -- /bin/bash</code></pre>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+    <script src="topic.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker & MLOps | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">🐳</div>
+            <div class="topic-info">
+                <span class="topic-category">System Design & MLOps</span>
+                <h1 class="topic-title">Docker & MLOps</h1>
+                <p class="topic-subtitle">Containerization and CI/CD for Reproducible ML</p>
+            </div>
+        </header>
+
+        <!-- Why Docker -->
+        <section class="content-card summary-card">
+            <h2>📌 Why Docker for ML?</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">🔄</span>
+                    <div>
+                        <strong>Reproducibility</strong>
+                        <p>Eliminate "It works on my machine". Same OS libs, same python versions everywhere.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">📦</span>
+                    <div>
+                        <strong>Portability</strong>
+                        <p>Build once, run anywhere (AWS, Azure, Local, On-prem).</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🚀</span>
+                    <div>
+                        <strong>Scalability</strong>
+                        <p>Evaluate instances easily with Kubernetes (K8s).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dockerfile Best Practices -->
+        <section class="content-card">
+            <h2>🛠️ Dockerfile Best Practices</h2>
+
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Dockerfile</span>
+                    <span class="code-title">Optimized Python ML Image</span>
+                </div>
+                <pre><code class="language-dockerfile"># 1. Use slim base image (smaller attack surface, faster download)
+FROM python:3.9-slim-buster
+
+# 2. Set working dir
+WORKDIR /app
+
+# 3. Prevent python buffering (logs appear immediately)
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1
+
+# 4. Install system dependencies (only if needed, e.g. for cv2)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc \
+    libgl1-mesa-glx \
+    && rm -rf /var/lib/apt/lists/*
+
+# 5. Copy requirements FIRST (for layer caching)
+COPY requirements.txt .
+
+# 6. Install python dependencies (no cache dir to save space)
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 7. Copy remaining code
+COPY . .
+
+# 8. Create non-root user (Security Best Practice)
+RUN useradd -m appuser
+USER appuser
+
+# 9. Expose port (metadata only)
+EXPOSE 8000
+
+# 10. Run command
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]</code></pre>
+            </div>
+
+            <h3>Optimization Tips</h3>
+            <ul>
+                <li><strong>Multi-stage builds:</strong> Build in one container, copy only artifacts to a second tiny
+                    container (good for compiled languages or heavy builds).</li>
+                <li><strong>.dockerignore:</strong> EXCLUDE `.git`, `__pycache__`, `data/` (large datasets), `venv/`.
+                    Vital for small context!</li>
+                <li><strong>Order Matters:</strong> Changing a line invalidates cache for ALL lines after it. Put things
+                    that change least (requirements) at top, code at bottom.</li>
+            </ul>
+        </section>
+
+        <!-- CI/CD for ML -->
+        <section class="content-card">
+            <h2>♾️ CI/CD for ML</h2>
+            <p>Continuous Integration (CI) and Continuous Deployment (CD) adapted for Machine Learning (CT/CM:
+                Continuous Training/Monitoring).</p>
+
+            <div class="diagram-box">
+                <pre>
+    Code Push      CI Pipeline       CD Pipeline        Production
+    (Git)    ──▶  (Tests/Lint)  ──▶ (Deploy App)  ──▶  (Endpoint)
+                        │                 │                │
+                        ▼                 ▼                ▼
+                   Unit Tests        Build Image      Monitor
+                   Data Val          Push Registry    (Drift?) ──▶ Trigger Retrain ⟳
+                </pre>
+            </div>
+
+            <h3>Key Differences for ML</h3>
+            <ul>
+                <li><strong>Code + Data + Model:</strong> Version control isn't just git. You need DVC (Data Version
+                    Control) or MLflow.</li>
+                <li><strong>Testing:</strong>
+                    <ul>
+                        <li>Unit Tests: Check code logic.</li>
+                        <li>Data Tests: Check schema, nulls, ranges (Great Expectations).</li>
+                        <li>Model Tests: Check accuracy not dropping below baseline.</li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Interview Questions -->
+        <section class="content-card">
+            <h2>🎤 Interview Questions</h2>
+            <div class="qa-list">
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>Difference between Docker and Virtual Machine?</span>
+                    </div>
+                    <div class="qa-answer" style="display:block; margin-top:10px;">
+                        <p>VM has its own full OS (kernel). Heavy, slow boot. Docker containers share the host OS
+                            kernel. Lightweight, fast boot.</p>
+                    </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>How to reduce Docker image size?</span>
+                    </div>
+                    <div class="qa-answer" style="display:block; margin-top:10px;">
+                        <p>1) Use `slim` or `alpine` base images. 2) proper ordering of layers. 3) `.dockerignore`
+                            files. 4) Multi-stage builds. 5) `pip install --no-cache-dir`. </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                More MLOps Topics Coverage Coming Soon...
+            </button>
+        </div>
+    </main>
+    <script src="topic.js"></script>
+</body>
+
+</html>

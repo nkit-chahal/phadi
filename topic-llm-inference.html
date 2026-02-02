@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LLM Inference & Optimization | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand"><span class="brand-icon">🚀</span><span class="brand-text">PrepHub</span></div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">⚡</div>
+            <div class="topic-info">
+                <span class="topic-category">Advanced MLOps</span>
+                <h1 class="topic-title">LLM Inference & Optimization</h1>
+                <p class="topic-subtitle">Running Large Language Models efficiently: Quantization, vLLM, and Attention
+                </p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 Core Concepts</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">📉</span>
+                    <div>
+                        <strong>Quantization</strong>
+                        <p>Reducing precision (weights) from FP16 (2 bytes) to INT8, INT4, or NF4 to save VRAM and
+                            increase speed.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🏎️</span>
+                    <div>
+                        <strong>Attention Optimization</strong>
+                        <p>Techniques like FlashAttention and PagedAttention to overcome the memory bottleneck of the
+                            Self-Attention mechanism.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>1. Quantization Techniques</h2>
+
+            <h3>QLoRA (Quantized LoRA)</h3>
+            <p>Great for <strong>Fine-tuning</strong> on consumer hardware.</p>
+            <ul>
+                <li><strong>4-bit Normal Float (NF4):</strong> Information-theoretically optimal quantization for
+                    normally distributed weights.</li>
+                <li><strong>Double Quantization:</strong> Quantizing the quantization constants themselves.</li>
+                <li><strong>Paged Optimizers:</strong> Offloading optimizer states to CPU RAM when GPU OOMs.</li>
+            </ul>
+
+            <h3>GPTQ & AWQ (Post-Training Quantization)</h3>
+            <p>Great for <strong>Inference</strong> only.</p>
+            <ul>
+                <li><strong>GPTQ (Generative Pre-trained Transformer Quantization):</strong> Layer-wise quantization
+                    that adjusts remaining weights to compensate for error. Fast decoding.</li>
+                <li><strong>AWQ (Activation-aware Weight Quantization):</strong> Protects 1% of salient weights (based
+                    on activation magnitude) by keeping them in FP16. Better accuracy than GPTQ.</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>2. Throughput Optimization</h2>
+
+            <h3>vLLM & PagedAttention</h3>
+            <p><strong>The problem:</strong> KV Cache (Key-Value) memory grows dynamically. Standard systems
+                pre-allocate contiguous chunks, leading to fragmentation and waste (60-80% wasted VRAM).</p>
+            <p><strong>The solution (PagedAttention):</strong> Inspired by OS Virtual Memory. Blocks of KV cache are
+                stored in non-contiguous memory spaces. The "Block Table" maps logical tokens to physical blocks.</p>
+            <ul>
+                <li><strong>Result:</strong> Near-zero memory waste.</li>
+                <li><strong>Benefit:</strong> Can fit much larger batches -> 2-4x higher throughput.</li>
+            </ul>
+
+            <h3>FlashAttention-2</h3>
+            <p><strong>The problem:</strong> Attention is quadratic O(N²). Moving matrices between High-Bandwidth Memory
+                (HBM) and GPU SRAM is the bottleneck.</p>
+            <p><strong>The solution:</strong> Tiling. Compute attention in small tiles that fit in SRAM. Recompute stats
+                avoiding HBM access.</p>
+            <ul>
+                <li><strong>Result:</strong> Linear scaling with sequence length.</li>
+                <li><strong>Benefit:</strong> Faster training and inference for long contexts.</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>💻 Code Example: vLLM</h2>
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Running vLLM engine</span>
+                </div>
+                <pre><code class="language-python">from vllm import LLM, SamplingParams
+
+# 1. Initialize Engine (loads model, manages PagedAttention)
+llm = LLM(model="meta-llama/Llama-2-7b-hf")
+
+# 2. Define prompts
+prompts = [
+    "Hello, my name is",
+    "The president of the United States is",
+    "The capital of France is",
+]
+
+# 3. Define sampling parameters
+sampling_params = SamplingParams(temperature=0.8, top_p=0.95)
+
+# 4. Generate (Batched)
+outputs = llm.generate(prompts, sampling_params)
+
+# Print results
+for output in outputs:
+    prompt = output.prompt
+    generated_text = output.outputs[0].text
+    print(f"Prompt: {prompt!r}, Generated text: {generated_text!r}")</code></pre>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+    <script src="topic.js"></script>
+</body>
+
+</html>

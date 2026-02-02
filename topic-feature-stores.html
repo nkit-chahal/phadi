@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Stores | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand"><span class="brand-icon">🚀</span><span class="brand-text">PrepHub</span></div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">🏪</div>
+            <div class="topic-info">
+                <span class="topic-category">Data Engineering</span>
+                <h1 class="topic-title">Feature Stores</h1>
+                <p class="topic-subtitle">Solving Training-Serving Skew and Feature consistency</p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 The Problem: Training-Serving Skew</h2>
+            <p><strong>Scenario:</strong> You train your model using SQL on a Data Warehouse (Batch). You serve your
+                model using Python code helping an API (Online).</p>
+            <ul>
+                <li><strong>Training:</strong> Calculates "Average Order Value" over last 30 days using heavy SQL Query.
+                </li>
+                <li><strong>Serving:</strong> Calculates "Average Order Value" using a Redis lookup or python loop.</li>
+                <li><strong>Result:</strong> Logic mismatch = Model performs great in Jupyter, fails in Prod.</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>The Solution: Feature Store</h2>
+            <p>A centralized repository that manages feature logic and syncs values between "Offline" (Training) and
+                "Online" (Serving) stores.</p>
+
+            <h3>Core Components</h3>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">💾</span>
+                    <div>
+                        <strong>Offline Store</strong>
+                        <p>Cheap, high capacity (S3, BigQuery, Snowflake). Used for generating historical training
+                            datasets.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">⚡</span>
+                    <div>
+                        <strong>Online Store</strong>
+                        <p>Low latency, key-value (Redis, DynamoDB). Used for real-time inference lookup.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🔄</span>
+                    <div>
+                        <strong>Registry</strong>
+                        <p>Definitions of feature logic. Ensures same code generates data for both stores.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>💻 Implementation Example (Feast)</h2>
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Defining a Feature View</span>
+                </div>
+                <pre><code class="language-python">from feast import FeatureView, Field, Entity
+from feast.types import Int64, Float32
+from datetime import timedelta
+
+# 1. Define Entity (The primary key)
+driver = Entity(name="driver", join_keys=["driver_id"])
+
+# 2. Define Feature View (The logic)
+@feature_view(
+    source=parquet_source, 
+    schema=[
+        Field(name="daily_trips", dtype=Int64),
+        Field(name="avg_rating", dtype=Float32),
+    ],
+    ttl=timedelta(days=1)
+)
+def driver_stats_view(source):
+    return source
+
+# --- USAGE ---
+
+# A. Training (Get full history context)
+historical_data = store.get_historical_features(
+    entity_df=training_df,
+    features=["driver_stats_view:daily_trips"]
+).to_df()
+
+# B. Serving (Get latest value instantly)
+online_features = store.get_online_features(
+    features=["driver_stats_view:daily_trips"],
+    entity_rows=[{"driver_id": 1001}]
+).to_dict()</code></pre>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+    <script src="topic.js"></script>
+</body>
+
+</html>

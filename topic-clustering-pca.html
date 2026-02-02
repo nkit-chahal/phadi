@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clustering & PCA | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">🧬</div>
+            <div class="topic-info">
+                <span class="topic-category">Unsupervised Learning</span>
+                <h1 class="topic-title">Clustering & PCA</h1>
+                <p class="topic-subtitle">Finding patterns in unlabeled data</p>
+            </div>
+        </header>
+
+        <!-- Clustering Algorithms -->
+        <section class="content-card">
+            <h2>🧩 Clustering Algorithms</h2>
+            <div class="table-container">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Algorithm</th>
+                            <th>How it works</th>
+                            <th>Pros</th>
+                            <th>Cons</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>K-Means</strong></td>
+                            <td>Centroids iterative move</td>
+                            <td>Simple, fast</td>
+                            <td>Assume spherical, need to pick K</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DBSCAN</strong></td>
+                            <td>Density based (eps, min_pts)</td>
+                            <td>Finds arbitrary shapes, handles noise</td>
+                            <td>Struggles with varying density</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hierarchical</strong></td>
+                            <td>Tree structure (dendrogram)</td>
+                            <td>No need to pick K, provides taxonomy</td>
+                            <td>Slow O(N³), hard for large data</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- PCA -->
+        <section class="content-card">
+            <h2>📉 PCA (Principal Component Analysis)</h2>
+            <p>Reduce dimensionality while preserving maximum variance. "Squashing data onto the most informative axes".
+            </p>
+
+            <h3>Steps for PCA</h3>
+            <ol>
+                <li>Standardize the data (Mean=0, Std=1).</li>
+                <li>Compute Covariance Matrix.</li>
+                <li>Compute Eigenvectors and Eigenvalues.</li>
+                <li>Sort Eigenvalues (highest variance first).</li>
+                <li>Project data onto top k Eigenvectors.</li>
+            </ol>
+
+            <h3>The "Curse of Dimensionality"</h3>
+            <p>As dimensions increase, data becomes sparse. Distance metrics (Euclidean) lose meaning. Models overfit
+                easily. PCA fixes this by removing noise dimensions.</p>
+        </section>
+
+        <!-- Interview Questions -->
+        <section class="content-card">
+            <h2>🎤 Interview Questions</h2>
+            <div class="qa-list">
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>How do you choose K in K-Means?</span>
+                    </div>
+                    <div class="qa-answer" style="display:block; margin-top:10px;">
+                        <p><strong>Elbow Method:</strong> Plot inertia (sum of squared distances) vs K. Look for the
+                            "elbow" where improvements flatten out.
+                            <strong>Silhouette Score:</strong> Measures how similar object is to its own cluster vs
+                            other clusters (-1 to 1).
+                        </p>
+                    </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>PCA vs t-SNE?</span>
+                    </div>
+                    <div class="qa-answer" style="display:block; margin-top:10px;">
+                        <p><strong>PCA:</strong> Linear, deterministic, preserves global structure. Good for
+                            preprocessing.
+                            <strong>t-SNE:</strong> Non-linear, probabilistic, preserves local structure. Good for
+                            visualization ONLY (clusters in t-SNE don't always mean real clusters).
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+    <script src="topic.js"></script>
+</body>
+
+</html>

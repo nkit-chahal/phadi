@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Testing Strategies | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand"><span class="brand-icon">🚀</span><span class="brand-text">PrepHub</span></div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">🧪</div>
+            <div class="topic-info">
+                <span class="topic-category">Quality Assurance</span>
+                <h1 class="topic-title">ML Testing Strategies</h1>
+                <p class="topic-subtitle">The Testing Pyramid: Data, Model, and Infrastructure tests</p>
+            </div>
+        </header>
+
+        <section class="content-card summary-card">
+            <h2>📌 The ML Testing Pyramid</h2>
+            <div class="diagram-box">
+                <pre>
+      /   Model Performance  \   (Accuracy, F1, Bias)
+     /     Model Integrity    \  (Shape check, NaNs)
+    /        Data Validation    \ (Schema, Nulls, Ranges)
+   /      Unit & Infra Tests     \ (Code logic, API Health)
+  ---------------------------------
+                </pre>
+            </div>
+        </section>
+
+        <section class="content-card">
+            <h2>1. Data Tests (The Foundation)</h2>
+            <p>Garbage In, Garbage Out. Verify data <i>before</i> it hits your model.</p>
+            <ul>
+                <li><strong>Schema:</strong> Are columns present? Types correct?</li>
+                <li><strong>Completeness:</strong> Are critical features missing (Nulls)?</li>
+                <li><strong>Validity:</strong> Is age > 0? Is probability between 0 and 1?</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>2. Model Integrity Tests</h2>
+            <p>Verify the model artifact works technically.</p>
+            <ul>
+                <li><strong>Input/Output shape:</strong> Does model accept (B, 3, 224, 224)?</li>
+                <li><strong>Staleness:</strong> Is the model file older than 24 hours?</li>
+                <li><strong>Sanity:</strong> Does it predict constant class for all inputs? (Bug)</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>3. Performance Tests</h2>
+            <p>Verify the model is actually "smart".</p>
+            <ul>
+                <li><strong>Golden Set:</strong> Test on curated set of important examples.</li>
+                <li><strong>Minimum Accuracy Threshold:</strong> Fail build if Acc < 0.85.</li>
+                <li><strong>Bias/Slicing:</strong> Check accuracy on sub-groups (e.g., performance on "US Users" vs "EU
+                    Users").</li>
+            </ul>
+        </section>
+
+        <section class="content-card">
+            <h2>💻 Code Example: Great Expectations</h2>
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Data Validation</span>
+                </div>
+                <pre><code class="language-python">import great_expectations as ge
+
+df = ge.read_csv("data.csv")
+
+# 1. Expect column to exist
+df.expect_column_to_exist("user_age")
+
+# 2. Expect values to be in range
+df.expect_column_values_to_be_between(
+    "user_age", 
+    min_value=0, 
+    max_value=120
+)
+
+# 3. Expect no nulls
+df.expect_column_values_to_not_be_null("user_id")
+
+# Run validation
+results = df.validate()
+if not results["success"]:
+    raise ValueError("Data Quality Check Failed!")</code></pre>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+    <script src="topic.js"></script>
+</body>
+
+</html>

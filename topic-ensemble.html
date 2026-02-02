@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ensemble Methods | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">🌲</div>
+            <div class="topic-info">
+                <span class="topic-category">ML Fundamentals</span>
+                <h1 class="topic-title">Ensemble Methods</h1>
+                <p class="topic-subtitle">Bagging, Boosting, and Stacking explained</p>
+            </div>
+        </header>
+
+        <!-- Quick Summary -->
+        <section class="content-card summary-card">
+            <h2>📌 Quick Summary</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">🎒</span>
+                    <div>
+                        <strong>Bagging (Bootstrap Aggregating)</strong>
+                        <p>Train parallel independent models on random subsets. Reduces <strong>Variance</strong>.
+                            (e.g., Random Forest)</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🚀</span>
+                    <div>
+                        <strong>Boosting</strong>
+                        <p>Train sequential models, each correcting previous errors. Reduces <strong>Bias</strong>.
+                            (e.g., XGBoost, AdaBoost)</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bagging vs Boosting -->
+        <section class="content-card">
+            <h2>🌲 Random Forest vs XGBoost</h2>
+            <div class="table-container">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Random Forest (Bagging)</th>
+                            <th>XGBoost (Boosting)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Building</strong></td>
+                            <td>Independent parallel trees</td>
+                            <td>Sequential trees (additive)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Goal</strong></td>
+                            <td>Reduce Variance (Overfitting)</td>
+                            <td>Reduce Bias (Underfitting)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tree Depth</strong></td>
+                            <td>Deep (fully grown)</td>
+                            <td>Shallow (weak learners)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Outliers</strong></td>
+                            <td>Robust</td>
+                            <td>Sensitive (tries to fix them)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Speed</strong></td>
+                            <td>Faster training (parallel)</td>
+                            <td>Slower training (sequential)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Key Concepts -->
+        <section class="content-card">
+            <h2>🔑 Key Concepts</h2>
+
+            <h3>1. Gradient Boosting (GBM)</h3>
+            <p>Uses gradient descent to optimize the loss function. Each new tree predicts the **residuals** (errors) of
+                the previous tree.</p>
+            <div class="formula-box">
+                <code>Pred_new = Pred_old + learning_rate * Error_prediction</code>
+            </div>
+
+            <h3>2. XGBoost Features</h3>
+            <ul>
+                <li><strong>Regularization:</strong> L1/L2 built-in (prevents overfitting).</li>
+                <li><strong>Handling Nulls:</strong> Automatically learns default direction for missing values.</li>
+                <li><strong>Parallelism:</strong> Parallelizes tree construction (block design), not tree building
+                    itself.</li>
+            </ul>
+
+            <h3>3. Stacking</h3>
+            <p>Train multiple different models (SVM, RF, Neural Net) and use a "Meta-Learner" (usually Logistic
+                Regression) to make final prediction based on their outputs.</p>
+        </section>
+
+        <!-- Interview Questions -->
+        <section class="content-card">
+            <h2>🎤 Interview Questions</h2>
+            <div class="qa-list">
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>Why does Random Forest not overfit easily?</span>
+                    </div>
+                    <div class="qa-answer" style="display:block; margin-top:10px;">
+                        <p>Because it averages multiple uncorrelated trees. The variance of the average of N i.i.d
+                            random variables is Var(X)/N. More trees = less variance.</p>
+                    </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>When would you use LightGBM over XGBoost?</span>
+                    </div>
+                    <div class="qa-answer" style="display:block; margin-top:10px;">
+                        <p>LightGBM is faster and uses less memory. It uses GOSS (Gradient-based One-Side Sampling) and
+                            EFB (Exclusive Feature Bundling). Prefer it for massive datasets where speed is critical.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

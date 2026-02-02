@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activation Functions | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <header class="topic-header">
+            <div class="topic-icon">📈</div>
+            <div class="topic-info">
+                <span class="topic-category">Deep Learning</span>
+                <h1 class="topic-title">Activation Functions</h1>
+                <p class="topic-subtitle">Introducing non-linearity to neural networks</p>
+            </div>
+        </header>
+
+        <!-- Common Functions -->
+        <section class="content-card">
+            <h2>🔑 Common Functions</h2>
+            <div class="table-container">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Function</th>
+                            <th>Range</th>
+                            <th>Pros</th>
+                            <th>Cons</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Sigmoid</strong></td>
+                            <td>(0, 1)</td>
+                            <td>Good for probability output</td>
+                            <td>Vanishing gradient, not zero-centered</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tanh</strong></td>
+                            <td>(-1, 1)</td>
+                            <td>Zero-centered</td>
+                            <td>Vanishing gradient</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ReLU</strong></td>
+                            <td>[0, ∞)</td>
+                            <td>Fast computation, no vanishing grad for +ve</td>
+                            <td>Dying ReLU (dead neurons)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Leaky ReLU</strong></td>
+                            <td>(-∞, ∞)</td>
+                            <td>Fixes Dying ReLU</td>
+                            <td>Extra parameter to tune</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Softmax</strong></td>
+                            <td>(0, 1) sum=1</td>
+                            <td>Multi-class classification</td>
+                            <td>Only for output layer</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Modern Functions -->
+        <section class="content-card">
+            <h2>✨ Modern Activations (Transformers)</h2>
+
+            <h3>Swish (Google)</h3>
+            <div class="formula-box"><code>f(x) = x * sigmoid(x)</code></div>
+            <p>Self-gated activation function. Smooth, non-monotonic. Outperforms ReLU in deep networks.</p>
+
+            <h3>GELU (Gaussian Error Linear Unit)</h3>
+            <div class="formula-box"><code>f(x) ≈ x * Φ(x)</code></div>
+            <p>Used in <strong>BERT, GPT-3, ViT</strong>. Weighs inputs by their magnitude. Smooth curve allows better
+                gradient flow than ReLU's sharp corner.</p>
+        </section>
+
+        <!-- Critical Problems -->
+        <section class="content-card">
+            <h2>⚠️ Critical Problems</h2>
+
+            <h3>1. Vanishing Gradient</h3>
+            <p><strong>Cause:</strong> In Sigmoid/Tanh, large inputs saturate (gradient ≈ 0). During backprop, gradients
+                multiply via chain rule. 0.1 * 0.1 * 0.1 ... ≈ 0.</p>
+            <p><strong>Effect:</strong> Early layers stop learning.</p>
+            <p><strong>Fix:</strong> Use ReLU, Residual Connections (ResNet), Batch Normalization.</p>
+
+            <h3>2. Dying ReLU</h3>
+            <p><strong>Cause:</strong> If a neuron outputs < 0, gradient is 0. Weights cease to update. If learning rate
+                    is too high, many neurons may "die" .</p>
+                    <p><strong>Fix:</strong> Leaky ReLU, lower learning rate.</p>
+        </section>
+
+        <!-- Mark Complete -->
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+    <script src="topic.js"></script>
+</body>
+
+</html>

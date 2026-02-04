@@ -190,10 +190,22 @@ const mlConcepts = [
         topicPage: "topic-ensemble.html"
     },
     {
-        icon: "📈",
-        title: "Activation Functions",
-        description: "Sigmoid, Tanh, ReLU, LeakyReLU, GELU, Swish. Vanishing gradient solutions.",
-        topicPage: "topic-activation.html"
+        icon: "🔥",
+        title: "PyTorch Fundamentals",
+        description: "Tensors, Autograd, Modules, and training loops. The standard for deep learning research and prod.",
+        topicPage: "topic-pytorch.html"
+    },
+    {
+        icon: "🎮",
+        title: "Reinforcement Learning",
+        description: "Agents, Environments, Rewards, and Policies. From Q-Learning to PPO and RLHF.",
+        topicPage: "topic-rl.html"
+    },
+    {
+        icon: "👁️",
+        title: "Advanced Computer Vision",
+        description: "Beyond classification: Object Detection (YOLO), Segmentation, and Self-Supervised Learning.",
+        topicPage: "topic-advanced-cv.html"
     }
 ];
 
@@ -272,6 +284,42 @@ const genaiTopics = [
             "RAG for dynamic knowledge",
             "RAG is cheaper, easier to update",
             "Often combine both approaches"
+        ]
+    },
+    {
+        icon: "🤖",
+        title: "Transformers & Attention",
+        content: "The architecture behind GPT, BERT, and modern LLMs.",
+        topicPage: "topic-transformers.html",
+        points: [
+            "Self-Attention mechanism",
+            "Multi-head attention & Scaling",
+            "Positional Encodings",
+            "Encoder-only vs Decoder-only"
+        ]
+    },
+    {
+        icon: "🧠",
+        title: "Advanced LLM Architecture",
+        content: "Deep dive into model training, optimization, and scaling.",
+        topicPage: "topic-advanced-llm.html",
+        points: [
+            "Pre-training vs SFT vs RLHF",
+            "Rotary Positional Embeddings (RoPE)",
+            "KV Cache optimization (GQA, MQA)",
+            "Sparse Attention & Mixture of Experts (MoE)"
+        ]
+    },
+    {
+        icon: "🛠️",
+        title: "LangSmith & Observability",
+        content: "Debugging, testing, and evaluating LLM applications.",
+        topicPage: "topic-langsmith.html",
+        points: [
+            "Tracing & Debugging chains",
+            "LLM-as-a-Judge evaluation",
+            "Dataset creation from logs",
+            "A/B testing prompts"
         ]
     }
 ];
@@ -422,6 +470,18 @@ const systemDesignTopics = [
         content: "Orchestration fundamentals.",
         topicPage: "topic-kubernetes-ml.html",
         points: ["Pods & Nodes", "Services & Ingress", "Deployments vs StatefulSets"]
+    },
+    {
+        icon: "🔭",
+        title: "ML Monitoring & Observability",
+        content: "Ensuring model health in production.",
+        topicPage: "topic-ml-monitoring.html",
+        points: [
+            "Metrics (Prometheus/Grafana)",
+            "Logging & Tracing",
+            "Advanced drift detection (PSI, KS-Test)",
+            "Alerting strategies"
+        ]
     }
 ];
 
@@ -525,7 +585,10 @@ const flashcards = [
     { q: "How to handle Cold Start in Recommenders?", a: "Use content-based filtering (user meta), popular items, or bandits until interaction history is built." },
     { q: "What is 'Training-Serving Skew'?", a: "Performance drop in production due to differences in data processing or environment between training and serving." },
     { q: "What is Distillation?", a: "Student model (small) learns to mimic probability distribution of Teacher model (large). Preserves knowledge with less compute." },
-    { q: "Explain 'PagedAttention' simply.", a: "Like Tetris for memory. Instead of reserving big empty blocks for text generation, it fills small gaps dynamically. Allows more users at once." }
+    { q: "Explain 'PagedAttention' simply.", a: "Like Tetris for memory. Instead of reserving big empty blocks for text generation, it fills small gaps dynamically. Allows more users at once." },
+    { q: "What is LangSmith?", a: "A platform for productionizing LLM applications. It provides tracing, debugging, testing, and monitoring capabilities, specifically optimized for LangChain." },
+    { q: "How does LangSmith handle Evaluation?", a: "It uses 'LLM-as-a-judge' or reference-based metrics (RAGAS) to score outputs on custom datasets created from production traces." },
+    { q: "Why use Tracing in LLM apps?", a: "To see exactly what happens inside a chain/agent. It logs the exact prompts sent, the context retrieved, and the latency of each step." }
 ];
 
 // ==========================================

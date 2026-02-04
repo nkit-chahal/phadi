@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Monitoring & Observability | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <div class="topic-icon">🔭</div>
+            <div class="topic-info">
+                <span class="topic-category">ML System Design</span>
+                <h1 class="topic-title">ML Monitoring & Observability</h1>
+                <p class="topic-subtitle">Ensuring model health, data integrity, and performance in production</p>
+            </div>
+        </header>
+
+        <!-- Quick Summary -->
+        <section class="content-card summary-card">
+            <h2>📌 Quick Summary</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">📉</span>
+                    <div>
+                        <strong>Drift Detection</strong>
+                        <p>Monitoring changes in input data distribution (Data Drift) or relationship with target
+                            (Concept Drift).</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🚦</span>
+                    <div>
+                        <strong>System Metrics</strong>
+                        <p>Latency, Throughput, Memory/CPU usage. Standard DevOps metrics applied to ML inference.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🎯</span>
+                    <div>
+                        <strong>ML Metrics</strong>
+                        <p>Precision, Recall, F1 in real-time. Requires delayed labels or proxy metrics.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detailed Explanation -->
+        <section class="content-card">
+            <h2>📖 Advanced Drift Detection</h2>
+            <h3>1. PSI (Population Stability Index)</h3>
+            <p>Measures how much the distribution of a variable has changed between two points in time.</p>
+            <ul>
+                <li><strong>PSI < 0.1:</strong> Stable, no action needed.</li>
+                <li><strong>0.1 < PSI < 0.25:</strong> Slight drift, investigate.</li>
+                <li><strong>PSI > 0.25:</strong> Significant drift, retrain model.</li>
+            </ul>
+
+            <h3>2. Statistical Tests</h3>
+            <ul>
+                <li><strong>Kolmogorov-Smirnov (KS) Test:</strong> Non-parametric test for comparing two distributions.
+                </li>
+                <li><strong>KL Divergence:</strong> Measures how one probability distribution differs from a second
+                    reference distribution.</li>
+            </ul>
+
+            <h3>3. Monitoring Tooling</h3>
+            <p><strong>Prometheus + Grafana</strong> for time-series metrics. <strong>Evidently AI / WhyLabs</strong>
+                for ML-specific drift reports.</p>
+        </section>
+
+        <!-- Interview Questions -->
+        <section class="content-card">
+            <h2>🎤 Interview Q&A</h2>
+            <div class="qa-list">
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>What is the difference between Data Drift and Concept Drift?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Data Drift (Covariate Shift):</strong> P(X) changes. The distribution of input
+                                features changes, but the relationship between input and output stays the same. (e.g.,
+                                users getting younger).</li>
+                            <li><strong>Concept Drift:</strong> P(Y|X) changes. The relationship between input and
+                                output changes. (e.g., spending habits change during a recession).</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>How do you monitor model performance if labels are delayed?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ol>
+                            <li>Monitor <strong>Data Drift</strong> as a proxy for performance degradation.</li>
+                            <li>Monitor <strong>Output Distribution Drift</strong> (is the model predicting more 'Spam'
+                                than usual?).</li>
+                            <li>Use <strong>Proxy Metrics</strong> (e.g., Click-Through Rate is a fast proxy for
+                                Relevance in Search).</li>
+                            <li>Statistical validation on a small human-labeled sample.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practice Problem -->
+        <section class="content-card">
+            <h2>✍️ Practice Problem</h2>
+            <div class="practice-item">
+                <p>Scenario: Your churn model's precision dropped from 80% to 50% in production, but its accuracy stayed
+                    at 90%. What could be happening?</p>
+                <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+                <div class="solution hidden">
+                    <p>This suggests <strong>Class Imbalance</strong> issues or <strong>Concept Drift</strong>. The
+                        model might be predicting the majority class (No Churn) to maintain high accuracy, but it's
+                        failing to identify the minority class (Churn) correctly, leading to high False Positives.
+                        Investigation: check confusion matrix and class distribution drift.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mark Complete -->
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

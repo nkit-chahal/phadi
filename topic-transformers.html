@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformers & Attention | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <div class="topic-icon">🤖</div>
+            <div class="topic-info">
+                <span class="topic-category">GenAI & LLMs</span>
+                <h1 class="topic-title">Transformers & Attention</h1>
+                <p class="topic-subtitle">The architecture that changed AI - Self-Attention, Multi-head Attention, and
+                    more</p>
+            </div>
+        </header>
+
+        <!-- Quick Summary -->
+        <section class="content-card summary-card">
+            <h2>📌 Quick Summary</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">🧠</span>
+                    <div>
+                        <strong>Self-Attention</strong>
+                        <p>Allows tokens to "look" at other tokens in the sequence to capture context, regardless of
+                            distance.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🎭</span>
+                    <div>
+                        <strong>Multi-Head Attention</strong>
+                        <p>Runs multiple attention mechanisms in parallel to focus on different aspects of the input
+                            (e.g., syntax vs semantics).</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🏗️</span>
+                    <div>
+                        <strong>Encoder-Decoder</strong>
+                        <p>Original architecture for translation. BERT (Encoder-only), GPT (Decoder-only), T5 (Both).
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detailed Explanation -->
+        <section class="content-card">
+            <h2>📖 The Scaled Dot-Product Attention</h2>
+            <div class="formula-box">
+                <code>Attention(Q, K, V) = softmax(QKᵀ / √dₖ)V</code>
+            </div>
+            <p>Where:</p>
+            <ul>
+                <li><strong>Q (Query):</strong> What I'm looking for.</li>
+                <li><strong>K (Key):</strong> What I have to offer.</li>
+                <li><strong>V (Value):</strong> The actual information.</li>
+                <li><strong>√dₖ:</strong> Scaling factor to prevent large dot-products from pushing softmax into small
+                    gradient regions.</li>
+            </ul>
+
+            <h3>Why Transformers?</h3>
+            <p>Unlike RNNs, Transformers process entire sequences at once (parallelization). They solve the vanishing
+                gradient problem in long sequences through direct token-to-token connections.</p>
+        </section>
+
+        <!-- Interview Questions -->
+        <section class="content-card">
+            <h2>🎤 Interview Q&A</h2>
+            <div class="qa-list">
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>What is the purpose of Positional Encodings?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>Since Transformers have no recurrence or convolution, they are permutation-invariant (they
+                            don't know the order of words). Positional encodings are added to input embeddings to inject
+                            information about the position of tokens in the sequence.</p>
+                    </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>BERT vs GPT - what is the fundamental difference?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>BERT:</strong> Encoder-only. Uses bidirectional attention (can see future and
+                                past tokens). Best for understanding tasks like classification or NER.</li>
+                            <li><strong>GPT:</strong> Decoder-only. Uses masked self-attention (can only see past
+                                tokens). Best for generative tasks.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practice Problem -->
+        <section class="content-card">
+            <h2>✍️ Practice Problem</h2>
+            <div class="practice-item">
+                <p>Why is the dot product <code>QKᵀ</code> divided by <code>√dₖ</code>?</p>
+                <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+                <div class="solution hidden">
+                    <p>Divide by √dₖ to scale down the dot product. For large values of dₖ, the dot products grow large
+                        in magnitude, pushing the softmax function into regions where it has extremely small gradients,
+                        leading to vanishing gradients during backpropagation.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mark Complete -->
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

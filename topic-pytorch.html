@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PyTorch Fundamentals | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <div class="topic-icon">🔥</div>
+            <div class="topic-info">
+                <span class="topic-category">ML Fundamentals</span>
+                <h1 class="topic-title">PyTorch Fundamentals</h1>
+                <p class="topic-subtitle">Mastering the industry-standard library for deep learning and research</p>
+            </div>
+        </header>
+
+        <!-- Quick Summary -->
+        <section class="content-card summary-card">
+            <h2>📌 Quick Summary</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">🔢</span>
+                    <div>
+                        <strong>Tensors</strong>
+                        <p>The core data structure. Multi-dimensional arrays with GPU support and automatic differentiation.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">⚙️</span>
+                    <div>
+                        <strong>Autograd</strong>
+                        <p>The engine powering backpropagation. Tracks operations on tensors to compute gradients automatically.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🏗️</span>
+                    <div>
+                        <strong>nn.Module</strong>
+                        <p>The base class for all neural network modules. Encourages modular, object-oriented design.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detailed Explanation -->
+        <section class="content-card">
+            <h2>📖 Key Concepts</h2>
+
+            <h3>1. Tensors & Device Agnosis</h3>
+            <p>PyTorch tensors are similar to NumPy arrays but can run on GPUs (MPS/CUDA). Always write device-agnostic code.</p>
+            <pre><code class="language-python">device = "cuda" if torch.cuda.is_available() else "cpu"
+tensor = torch.randn(3, 3).to(device)</code></pre>
+
+            <h3>2. The Training Loop</h3>
+            <p>A standard PyTorch training loop consists of five key steps:</p>
+            <ol>
+                <li><strong>Forward Pass:</strong> Compute predictions</li>
+                <li><strong>Calculate Loss:</strong> Compare predictions to ground truth</li>
+                <li><strong>Optimizer.zero_grad():</strong> Clear previous gradients</li>
+                <li><strong>Loss.backward():</strong> Backpropagation (compute gradients)</li>
+                <li><strong>Optimizer.step():</strong> Update weights (Gradient Descent)</li>
+            </ol>
+
+            <h3>3. Module vs Functional</h3>
+            <p><code>torch.nn</code> contains stateful layers (with weights), while <code>torch.nn.functional</code> contains stateless operations (like activations).</p>
+        </section>
+
+        <!-- Code Examples -->
+        <section class="content-card">
+            <h2>💻 Implementation Example</h2>
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Defining and Training a Simple MLP</span>
+                </div>
+                <pre><code class="language-python">import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# 1. Define Architecture
+class SimpleMLP(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super().__init__()
+        self.network = nn.Sequential(
+            nn.Linear(input_size, hidden_size),
+            nn.ReLU(),
+            nn.Linear(hidden_size, output_size)
+        )
+    
+    def forward(self, x):
+        return self.network(x)
+
+# 2. Setup
+model = SimpleMLP(input_size=10, hidden_size=64, output_size=1)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+criterion = nn.MSELoss()
+
+# 3. Dummy Training Step
+X = torch.randn(32, 10)
+y = torch.randn(32, 1)
+
+model.train()
+optimizer.zero_grad()
+outputs = model(X)
+loss = criterion(outputs, y)
+loss.backward()
+optimizer.step()
+
+print(f"Loss: {loss.item():.4f}")</code></pre>
+            </div>
+        </section>
+
+        <!-- Interview Questions -->
+        <section class="content-card">
+            <h2>🎤 Interview Q&A</h2>
+            <div class="qa-list">
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>What is the difference between <code>.detach()</code> and <code>.numpy()</code>?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><code>.detach()</code> creates a new tensor that shares storage but doesn't require gradients (breaks the computation graph).</li>
+                            <li><code>.numpy()</code> converts a tensor to a NumPy array. Important: You can only call <code>.numpy()</code> on CPU tensors that don't require gradients. Usually, you use <code>tensor.detach().cpu().numpy()</code>.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>Why do we need <code>optimizer.zero_grad()</code>?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>PyTorch accumulates gradients by default (adds current gradients to existing ones). This is useful for things like Gradient Accumulation (simulating larger batch sizes). For standard training, we must clear them every step to avoid using gradients from the previous batch.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practice Problem -->
+        <section class="content-card">
+            <h2>✍️ Practice Problem</h2>
+            <div class="practice-item">
+                <p>Implement a custom <code>nn.Module</code> that represents a single linear layer <code>y = xW + b</code> without using <code>nn.Linear</code>.</p>
+                <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+                <div class="solution hidden">
+                    <pre><code class="language-python">class MyLinear(nn.Module):
+    def __init__(self, in_features, out_features):
+        super().__init__()
+        self.weights = nn.Parameter(torch.randn(in_features, out_features))
+        self.bias = nn.Parameter(torch.zeros(out_features))
+        
+    def forward(self, x):
+        return x @ self.weights + self.bias</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mark Complete -->
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

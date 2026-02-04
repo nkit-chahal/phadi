@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced LLM Architecture | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <div class="topic-icon">🧠</div>
+            <div class="topic-info">
+                <span class="topic-category">GenAI & LLMs</span>
+                <h1 class="topic-title">Advanced LLM Architecture</h1>
+                <p class="topic-subtitle">Beyond the basics: Optimization, Scaling, and Modern Training Techniques</p>
+            </div>
+        </header>
+
+        <!-- Quick Summary -->
+        <section class="content-card summary-card">
+            <h2>📌 Quick Summary</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">📈</span>
+                    <div>
+                        <strong>Scaling Laws</strong>
+                        <p>Performance improves predictably with more Compute, Data, and Parameters (Chinchilla
+                            optimality).</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">⚡</span>
+                    <div>
+                        <strong>Efficiency</strong>
+                        <p>Mixture of Experts (MoE), Grouped Query Attention (GQA), and FlashAttention for faster
+                            inference.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🔄</span>
+                    <div>
+                        <strong>Post-Training</strong>
+                        <p>Instruction tuning (SFT), alignment (RLHF/DPO), and Quantization (4-bit/8-bit).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detailed Explanation -->
+        <section class="content-card">
+            <h2>📖 Key Architectural Innovations</h2>
+            <h3>1. RoPE (Rotary Positional Embedding)</h3>
+            <p>A method to inject positional information by rotating query/key vectors in a complex plane. Used in Llama
+                models. Allows better extrapolation to long contexts.</p>
+
+            <h3>2. GQA (Grouped Query Attention)</h3>
+            <p>A middle ground between Multi-Head (MHA) and Multi-Query (MQA). Shares key/value heads across multiple
+                query heads to reduce KV cache size and memory bandwidth.</p>
+
+            <h3>3. MoE (Mixture of Experts)</h3>
+            <p>Only a fraction of the model (the 'experts') is activated for any given token. Allows models to have
+                massive parameter counts (e.g., Mixtral 8x7B) with the inference cost of much smaller models.</p>
+        </section>
+
+        <!-- Interview Questions -->
+        <section class="content-card">
+            <h2>🎤 Interview Q&A</h2>
+            <div class="qa-list">
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>What is the Chinchilla Scaling Law?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>It states that for an optimal model, the number of training tokens should scale linearly with
+                            the number of parameters. Most models were 'under-trained' before this finding (e.g., Llama
+                            7B was trained on 1T+ tokens, far exceeding Chinchilla recommendations to maximize inference
+                            efficiency).</p>
+                    </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>Explain DPO (Direct Preference Optimization).</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>DPO is an alternative to RLHF that eliminates the need for a separate reward model and
+                            complex reinforcement learning (PPO). It directly optimizes the LLM based on preference
+                            pairs (Chosen vs Rejected) using a simple binary cross-entropy loss, making training more
+                            stable and computationally efficient.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practice Problem -->
+        <section class="content-card">
+            <h2>✍️ Practice Problem</h2>
+            <div class="practice-item">
+                <p>How does KV Caching speed up inference?</p>
+                <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+                <div class="solution hidden">
+                    <p>During autoregressive decoding, the Key and Value vectors for all previous tokens remain
+                        constant. Instead of recomputing them every time a new token is generated, we store (cache)
+                        them, reducing the computation from O(N²) to O(N) per step.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mark Complete -->
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

@@ -238,20 +238,119 @@
 }
 
 .code-example pre {
+    position: relative;
     margin: 0;
     padding: var(--spacing-lg);
-    background: #1e1e2e;
+    background: #1e1e1e;
+    /* VS Code Dark Modern background */
     overflow-x: auto;
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+.copy-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    color: #a0a0a0;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    backdrop-filter: blur(8px);
+    z-index: 10;
+}
+
+.copy-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.copy-btn.copied {
+    color: #4ec9b0;
+    border-color: rgba(78, 201, 176, 0.4);
+    background: rgba(78, 201, 176, 0.1);
+}
+
+.copy-icon {
+    font-size: 0.9rem;
 }
 
 .code-example code {
     font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
-    font-size: 0.85rem;
-    color: #cdd6f4;
-    line-height: 1.7;
+    font-size: 0.9rem;
+    color: #cccccc;
+    /* Default VS Code text color */
+    line-height: 1.6;
     white-space: pre;
     display: block;
 }
+
+/* VS Code Style Syntax Highlighting */
+.token.keyword {
+    color: #569cd6;
+    font-weight: normal;
+}
+
+/* Blue for def/class/if */
+.token.control {
+    color: #c586c0;
+}
+
+/* Pink for return/for/while */
+.token.function {
+    color: #dcdcaa;
+}
+
+/* Yellow for functions */
+.token.string {
+    color: #ce9178;
+}
+
+/* Orange for strings */
+.token.comment {
+    color: #6a9955;
+    font-style: italic;
+}
+
+/* Green for comments */
+.token.number {
+    color: #b5cea8;
+}
+
+/* Light green for numbers */
+.token.operator {
+    color: #d4d4d4;
+}
+
+/* Grey for operators */
+.token.class {
+    color: #4ec9b0;
+}
+
+/* Teal for types/classes */
+.token.decorator {
+    color: #dcdcaa;
+}
+
+/* Yellow for decorators */
+.token.builtin {
+    color: #4ec9b0;
+}
+
+/* Teal for builtins */
+.token.variable {
+    color: #9cdcfe;
+}
+
+/* Light blue for variables */
 
 /* Q&A Section */
 .qa-list {

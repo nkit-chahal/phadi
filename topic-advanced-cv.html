@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Computer Vision | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <div class="topic-icon">👁️</div>
+            <div class="topic-info">
+                <span class="topic-category">ML Fundamentals</span>
+                <h1 class="topic-title">Advanced Computer Vision</h1>
+                <p class="topic-subtitle">Object Detection, Segmentation, and Industrial AI Applications</p>
+            </div>
+        </header>
+
+        <!-- Quick Summary -->
+        <section class="content-card summary-card">
+            <h2>📌 Quick Summary</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">🎯</span>
+                    <div>
+                        <strong>Object Detection</strong>
+                        <p>Locating multiple objects with bounding boxes. One-stage (YOLO, SSD) vs Two-stage (Faster
+                            R-CNN).</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🧩</span>
+                    <div>
+                        <strong>Segmentation</strong>
+                        <p>Classifying pixels. Semantic (all cars) vs Instance (individual car 1, car 2) vs Panoptic
+                            (everything).</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🏗️</span>
+                    <div>
+                        <strong>Backbones & Necks</strong>
+                        <p>ResNet/EfficientNet as feature extractors. FPN/PAN as feature aggregators for multi-scale
+                            detection.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detailed Explanation -->
+        <section class="content-card">
+            <h2>📖 Detection Evolution</h2>
+            <h3>1. YOLO (You Only Look Once)</h3>
+            <p>Splits image into a grid. Each cell predicts boxes and probabilities. Optimized for speed (real-time).
+                YOLOv8/v10 are current state-of-the-art.</p>
+
+            <h3>2. Loss Functions in Detection</h3>
+            <ul>
+                <li><strong>Localization Loss:</strong> IoU Loss, GIoU, DIoU, CIoU (handles overlap better).</li>
+                <li><strong>Classification Loss:</strong> Focal Loss (handles foreground-background imbalance).</li>
+            </ul>
+
+            <h3>3. Self-Supervised Learning (SSL)</h3>
+            <p>Learning from unlabeled data using pretext tasks (e.g., Rotation prediction, Contrastive Learning like
+                SimCLR/MoCo).</p>
+        </section>
+
+        <!-- Interview Questions -->
+        <section class="content-card">
+            <h2>🎤 Interview Q&A</h2>
+            <div class="qa-list">
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>Explain NMS (Non-Maximum Suppression).</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>NMS is used to filter redundant overlapping bounding boxes. It keeps the box with the highest
+                            confidence and removes all others that have an IoU > threshold with that box. This ensures
+                            only one detection per object.</p>
+                    </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>How do you handle small object detection?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ol>
+                            <li><strong>Increase input resolution.</strong></li>
+                            <li><strong>Feature Pyramid Networks (FPN):</strong> Combine low-level high-res features
+                                with high-level semantic features.</li>
+                            <li><strong>Tiling:</strong> Crop image into smaller patches for inference.</li>
+                            <li><strong>Anchor tuning:</strong> Use smaller anchors.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practice Problem -->
+        <section class="content-card">
+            <h2>✍️ Practice Problem</h2>
+            <div class="practice-item">
+                <p>Difference between Semantic and Instance Segmentation?</p>
+                <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+                <div class="solution hidden">
+                    <p>Semantic Segmentation classifies pixels into classes (e.g., all pixels belonging to 'people' get
+                        the same label). Instance Segmentation distinguishes individual objects within a class (e.g.,
+                        'Person 1', 'Person 2' get different labels).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mark Complete -->
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

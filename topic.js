@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initQA();
     initProgress();
     initCompleteButton();
+    highlightCode();
+    initCopyButtons();
 });
 
 // ==========================================
@@ -200,5 +202,118 @@ function showConfetti() {
     }
 }
 
-// Syntax highlighting removed - using CSS-based approach instead
+// ==========================================
+// Copy to Clipboard
+// ==========================================
+
+function initCopyButtons() {
+    const codeExamples = document.querySelectorAll('.code-example pre');
+
+    codeExamples.forEach(pre => {
+        // Create Button
+        const button = document.createElement('button');
+        button.className = 'copy-btn';
+        button.innerHTML = `
+            <span class="copy-icon">📋</span>
+            <span class="btn-text">Copy</span>
+        `;
+
+        pre.appendChild(button);
+
+        button.addEventListener('click', async () => {
+            const code = pre.querySelector('code').textContent;
+
+            try {
+                await navigator.clipboard.writeText(code);
+
+                // Success State
+                button.classList.add('copied');
+                button.querySelector('.btn-text').textContent = 'Copied!';
+                button.querySelector('.copy-icon').textContent = '✅';
+
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.querySelector('.btn-text').textContent = 'Copy';
+                    button.querySelector('.copy-icon').textContent = '📋';
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy code:', err);
+            }
+        });
+    });
+}
+
+// ==========================================
+// Syntax Highlighting
+// ==========================================
+
+function highlightCode() {
+    const codeBlocks = document.querySelectorAll('code[class^="language-"]');
+
+    codeBlocks.forEach(block => {
+        let text = block.textContent;
+
+        // Simple Regex-based highlighting for Python/JS
+        const rules = [
+            { regex: /(#.*$)/gm, class: 'comment' }, // Comments
+            { regex: /("(?:[^"\\\\]|\\\\.)*"|'(?:[^'\\\\]|\\\\.)*')/g, class: 'string' }, // Strings
+            { regex: /\b(def|class|if|else|elif|for|while|return|import|from|as|with|try|except|finally|pass|in|is|not|and|or|lambda|yield|async|await)\b/g, class: 'keyword' }, // Keywords
+            { regex: /\b(None|True|False|self|cls)\b/g, class: 'builtin' }, // Special builtins
+            { regex: /\b(\d+)\b/g, class: 'number' }, // Numbers
+            { regex: /\b([a-zA-Z_][a-zA-Z0-9_]*)(?=\()/g, class: 'function' }, // Functions
+            { regex: /(@[a-zA-Z_][a-zA-Z0-9_]*)/g, class: 'decorator' }, // Decorators
+            { regex: /[+\-*\/=<>!&|%^~]/g, class: 'operator' } // Operators
+        ];
+
+        let html = text;
+
+        // We'll process carefully to avoid nesting issues
+        // This is a naive but effective one-pass approach for simple snippets
+        rules.forEach(rule => {
+            html = html.replace(rule.regex, (match) => {
+                // If it's already inside a span, don't wrap it again
+                // (Very simplified check for this implementation)
+                return `<span class="token ${rule.class}">${match}</span>`;
+            });
+        });
+
+        // Note: The above naive replace might break if strings contain keywords.
+        // For a more robust version, we'd tokenise. But for these prep materials,
+        // we'll use a slightly safer replacement strategy.
+
+        // Let's use a more robust version to avoid double wrapping
+        block.innerHTML = robustHighlight(text);
+    });
+}
+
+function robustHighlight(text) {
+    // 1. Strings and Comments first (they are "containers")
+    const containers = [];
+    let processed = text.replace(/("(?:[^"\\\\]|\\\\.)*"|'(?:[^'\\\\]|\\\\.)*'|#.*$)/gm, (match) => {
+        const id = `__CONT_${containers.length}__`;
+        containers.push({ id, content: match, type: match.startsWith('#') ? 'comment' : 'string' });
+        return id;
+    });
+
+    // 2. Other tokens
+    processed = processed
+        .replace(/\b(def|class|if|else|elif|import|from|as|with|try|except|finally|pass|in|is|not|and|or|lambda|yield|async|await)\b/g, '<span class="token keyword">$1</span>')
+        .replace(/\b(return|for|while|break|continue)\b/g, '<span class="token control">$1</span>')
+        .replace(/\b(None|True|False|self|cls)\b/g, '<span class="token builtin">$1</span>')
+        .replace(/\b(\d+)\b/g, '<span class="token number">$1</span>')
+        .replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)(?=\()/g, '<span class="token function">$1</span>')
+        .replace(/(@[a-zA-Z_][a-zA-Z0-9_]*)/g, '<span class="token decorator">$1</span>')
+        .replace(/[+\-*\/=<>!&|%^~]/g, '<span class="token operator">$1</span>');
+
+    // 3. Put containers back
+    containers.forEach(item => {
+        processed = processed.replace(item.id, `<span class="token ${item.type}">${item.content}</span>`);
+    });
+
+    return processed;
+}
+
+// ==========================================
+// Confetti Animation
+// ==========================================
 

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LangSmith & Observability | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <div class="topic-icon">🛠️</div>
+            <div class="topic-info">
+                <span class="topic-category">GenAI & LLMs</span>
+                <h1 class="topic-title">LangSmith & Observability</h1>
+                <p class="topic-subtitle">The platform for debugging, testing, and productionizing LLM applications</p>
+            </div>
+        </header>
+
+        <!-- Quick Summary -->
+        <section class="content-card summary-card">
+            <h2>📌 Quick Summary</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">🕵️</span>
+                    <div>
+                        <strong>Tracing</strong>
+                        <p>Visualizing the inner workings of complex chains and agents. See every prompt, retrieval, and
+                            latency.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">⚖️</span>
+                    <div>
+                        <strong>Evaluation</strong>
+                        <p>Testing your LLM app systematically using datasets and automated evaluators (LLM-as-a-Judge).
+                        </p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">📈</span>
+                    <div>
+                        <strong>Monitoring</strong>
+                        <p>Tracking performance, cost, and user feedback in production to identify areas for
+                            improvement.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detailed Explanation -->
+        <section class="content-card">
+            <h2>📖 Key Capabilities</h2>
+
+            <h3>1. Tracing & Debugging</h3>
+            <p>LangSmith provides a full trace of every interaction with your LLM app. For a RAG application, you can
+                see:</p>
+            <ul>
+                <li>The raw user query.</li>
+                <li>The exact query sent to the vector database.</li>
+                <li>Which documents were retrieved.</li>
+                <li>The final prompt sent to the LLM (with context).</li>
+                <li>The cost and latency of each step.</li>
+            </ul>
+
+            <h3>2. Dataset Creation</h3>
+            <p>You can "pin" production traces to a dataset, creating a golden test set from real-world usage. This is
+                essential for regression testing when you change prompts or models.</p>
+
+            <h3>3. Evaluators</h3>
+            <p>LangSmith supports several types of automated evaluators:</p>
+            <ul>
+                <li><strong>Reference-based:</strong> Comparing LLM output to a known ground truth.</li>
+                <li><strong>LLM-as-a-Judge:</strong> Using a more powerful model (e.g., GPT-4) to score the output of a
+                    smaller model.</li>
+                <li><strong>RAGAS:</strong> Measuring Faithfulness, Answer Relevance, and Context Precision.</li>
+            </ul>
+        </section>
+
+        <!-- Code Examples -->
+        <section class="content-card">
+            <h2>💻 Integration Example</h2>
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Enabling LangSmith in your App</span>
+                </div>
+                <pre><code class="language-python">import os
+from langchain.callbacks.manager import tracing_v2_enabled
+
+# Set environment variables (best practice is .env file)
+os.environ["LANGCHAIN_TRACING_V2"] = "true"
+os.environ["LANGCHAIN_API_KEY"] = "your_api_key_here"
+os.environ["LANGCHAIN_PROJECT"] = "Customer_Support_RAG"
+
+# Tracing is now global. Every LangChain call will be logged to LangSmith.
+# You can also use context managers for scoped tracing:
+with tracing_v2_enabled(project_name="Testing_Project"):
+    chain.invoke("What is our refund policy?")</code></pre>
+            </div>
+        </section>
+
+        <!-- Interview Questions -->
+        <section class="content-card">
+            <h2>🎤 Interview Q&A</h2>
+            <div class="qa-list">
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>Why do we need LangSmith if we already have logging?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>Traditional logging is flat and hard to parse for nested operations (like an Agent calling
+                            three tools). LangSmith provides <strong>nested traces</strong>, visualizing the
+                            parent-child relationship between calls. It also integrates evaluation tools and dataset
+                            management directly with those traces, which standard logging lacks.</p>
+                    </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>What are the key metrics to monitor in an LLM application?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ol>
+                            <li><strong>Latency:</strong> Time to first token and total response time.</li>
+                            <li><strong>Cost:</strong> Token usage per request/user.</li>
+                            <li><strong>Quality:</strong> Hallucination rates, correctness (via evaluators).</li>
+                            <li><strong>Reliability:</strong> Failures, rate limits, and fallback usage.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practice Problem -->
+        <section class="content-card">
+            <h2>✍️ Practice Problem</h2>
+            <div class="practice-item">
+                <p>Scenario: You want to test if a new prompt template reduces hallucinations. How would you use
+                    LangSmith for this?</p>
+                <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+                <div class="solution hidden">
+                    <ol>
+                        <li>Create a <strong>Dataset</strong> in LangSmith containing queries and their known-correct
+                            answers.</li>
+                        <li>Run the current prompt against the dataset and record the scores.</li>
+                        <li>Update the code with the <strong>new prompt</strong> and run it against the same dataset.
+                        </li>
+                        <li>Use the <strong>LangSmith Comparison View</strong> to see the side-by-side performance
+                            change including accuracy, latency, and cost.</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mark Complete -->
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

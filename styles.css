@@ -670,6 +670,93 @@ body {
 }
 
 /* ==========================================
+   System Design Cards
+   ========================================== */
+
+.systemdesign-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.system-design-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    position: relative;
+    overflow: hidden;
+    transition: all var(--transition-base);
+}
+
+.system-design-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--accent-tertiary) 100%);
+}
+
+.system-design-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(139, 92, 246, 0.3);
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
+}
+
+.system-design-card-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.system-design-card-icon {
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(139, 92, 246, 0.1);
+    border-radius: var(--radius-md);
+}
+
+.system-design-card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.system-design-card-content {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.system-design-card-content ul {
+    list-style: none;
+    margin-top: var(--spacing-md);
+}
+
+.system-design-card-content li {
+    padding: var(--spacing-xs) 0;
+    padding-left: var(--spacing-lg);
+    position: relative;
+}
+
+.system-design-card-content li::before {
+    content: '◈';
+    position: absolute;
+    left: 0;
+    color: var(--accent-secondary);
+}
+
+.system-design-card-footer {
+    margin-top: var(--spacing-lg);
+}
+
+/* ==========================================
    Stories Container
    ========================================== */
 

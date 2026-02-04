@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced PEFT & Optimization | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <div class="topic-icon">📉</div>
+            <div class="topic-info">
+                <span class="topic-category">GenAI & LLMs</span>
+                <h1 class="topic-title">Advanced PEFT & Model Optimization</h1>
+                <p class="topic-subtitle">Mastering the techniques to make LLMs small, fast, and accessible on consumer
+                    hardware</p>
+            </div>
+        </header>
+
+        <!-- Quick Summary -->
+        <section class="content-card summary-card">
+            <h2>📌 Quick Summary</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">🏗️</span>
+                    <div>
+                        <strong>Beyond LoRA</strong>
+                        <p>DoRA (Decomposed LoRA) and GaLore (Gradient Low-Rank) push the boundaries of memory-efficient
+                            fine-tuning.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">💎</span>
+                    <div>
+                        <strong>1-bit LLMs (BitNet)</strong>
+                        <p>Training models where weights are ternary (-1, 0, 1), drastically reducing energy and memory
+                            needs.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">⚡</span>
+                    <div>
+                        <strong>Advanced Quantization</strong>
+                        <p>GGUF (CPU/GPU) and EXL2 (Ultra-fast GPU) formats for local inference with minimal quality
+                            loss.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detailed Explanation -->
+        <section class="content-card">
+            <h2>📖 Deep Dive into Efficiency</h2>
+
+            <h3>1. DoRA (Weight-Decomposed LoRA)</h3>
+            <p>LoRA updates both magnitude and direction simultaneously. DoRA decouples them, allowing the model to
+                learn more like a full fine-tune while keeping the parameter efficiency of LoRA. It consistently
+                outperforms LoRA on downstream tasks.</p>
+
+            <h3>2. GaLore (Gradient Low-Rank Projection)</h3>
+            <p>Unlike LoRA which adds adapters, GaLore projects the <strong>gradients</strong> into a low-rank space.
+                This allows full-parameter fine-tuning of a 7B model on a consumer GPU (24GB VRAM) without adding any
+                inference latency.</p>
+
+            <h3>3. BitNet & ternary weights</h3>
+            <p>BitNet binarizes (or ternarizes) the weights during training. This eliminates the need for expensive
+                floating-point multiplications, replacing them with simple additions. This could lead to a 10x energy
+                reduction in AI hardware.</p>
+        </section>
+
+        <!-- Interview Questions -->
+        <section class="content-card">
+            <h2>🎤 Interview Q&A</h2>
+            <div class="qa-list">
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>What is the advantage of DoRA over LoRA?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <p>LoRA limits the update to a specific low-rank subspace. DoRA decomposes the weight change
+                            into magnitude and direction. By allowing the model to update these independently, it mimics
+                            full fine-tuning behavior more closely, resulting in better learning stability and higher
+                            accuracy, especially on small datasets.</p>
+                    </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>Explain the difference between GGUF and EXL2 formats.</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>GGUF (llama.cpp):</strong> Designed for "CPU + GPU" offloading. Very stable,
+                                works on almost any hardware (Mac Silicon, Windows, Linux).</li>
+                            <li><strong>EXL2 (ExLlamaV2):</strong> Native GPU quantization. Much faster than GGUF for
+                                single-GPU inference, supports variable bitrate (e.g., 4.65 bits per weight for optimal
+                                quality).</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Practice Problem -->
+        <section class="content-card">
+            <h2>✍️ Practice Problem</h2>
+            <div class="practice-item">
+                <p>Scenario: You have a 70B parameter model and only one 24GB GPU. You want to fine-tune it. Which
+                    technique would you choose and why?</p>
+                <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+                <div class="solution hidden">
+                    <p>You should use <strong>QLoRA (4-bit Quantized LoRA)</strong>. Even GaLore requires too much
+                        memory for a 70B model on 24GB. QLoRA quantizes the base 70B model to 4-bit (reducing it from
+                        ~140GB to ~35GB VRAM), and then uses paged optimizers to handle the remaining memory spikes. For
+                        70B, you would likely still need <strong>FSDP + QLoRA</strong> across multiple GPUs or a
+                        extremely high compression ratio.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mark Complete -->
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

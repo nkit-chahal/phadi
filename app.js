@@ -321,6 +321,30 @@ const genaiTopics = [
             "Dataset creation from logs",
             "A/B testing prompts"
         ]
+    },
+    {
+        icon: "🕵️‍♂️",
+        title: "AI Agents & Autonomous Systems",
+        content: "LLMs that can reason, use tools, and complete complex goals.",
+        topicPage: "topic-agents.html",
+        points: [
+            "ReAct: Reasoning + Acting",
+            "Tool Use (Function Calling)",
+            "Planning & Memory for Agents",
+            "Multi-agent frameworks (CrewAI, AutoGen)"
+        ]
+    },
+    {
+        icon: "📉",
+        title: "Advanced PEFT & Optimization",
+        content: "Making models smaller, faster, and cheaper to train.",
+        topicPage: "topic-peft-optimization.html",
+        points: [
+            "GaLore: Gradient Low-Rank Projection",
+            "DoRA: Weight-Decomposed LoRA",
+            "Quantization: GGUF vs EXL2",
+            "BitNet: 1-bit LLM training"
+        ]
     }
 ];
 

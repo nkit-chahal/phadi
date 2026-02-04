@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agents & Autonomous Systems | PrepHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="topic.css">
+</head>
+
+<body>
+    <div class="bg-gradient"></div>
+    <div class="bg-pattern"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-back">← Back to Dashboard</a>
+        <div class="nav-brand">
+            <span class="brand-icon">🚀</span>
+            <span class="brand-text">PrepHub</span>
+        </div>
+        <div class="topic-progress">
+            <span id="progress-text">0% Complete</span>
+            <div class="progress-bar-mini">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="topic-main">
+        <!-- Topic Header -->
+        <header class="topic-header">
+            <div class="topic-icon">🕵️‍♂️</div>
+            <div class="topic-info">
+                <span class="topic-category">GenAI & LLMs</span>
+                <h1 class="topic-title">AI Agents & Autonomous Systems</h1>
+                <p class="topic-subtitle">LLMs that don't just talk—they reason, act, and solve complex multi-step
+                    problems</p>
+            </div>
+        </header>
+
+        <!-- Quick Summary -->
+        <section class="content-card summary-card">
+            <h2>📌 Quick Summary</h2>
+            <div class="key-points">
+                <div class="key-point">
+                    <span class="point-icon">🧠</span>
+                    <div>
+                        <strong>Reasoning (ReAct)</strong>
+                        <p>The "Reasoning + Acting" paradigm. The agent thinks out loud before using a tool.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">⚒️</span>
+                    <div>
+                        <strong>Tool Use (Function Calling)</strong>
+                        <p>LLMs generating structured JSON to call external APIs, databases, or search engines.</p>
+                    </div>
+                </div>
+                <div class="key-point">
+                    <span class="point-icon">🤝</span>
+                    <div>
+                        <strong>Multi-Agent Systems</strong>
+                        <p>Coordinating multiple specialized agents (e.g., Researcher + Writer) to work together on a
+                            single goal.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detailed Explanation -->
+        <section class="content-card">
+            <h2>📖 The Anatomy of an Agent</h2>
+            <p>An autonomous agent generally consists of four main components:</p>
+            <ol>
+                <li><strong>Brain (Model):</strong> The core LLM that handles reasoning and decision-making.</li>
+                <li><strong>Planning:</strong> Breaking down complex goals into manageable sub-tasks (Chain of Thought,
+                    Tree of Thoughts).</li>
+                <li><strong>Memory:</strong> Short-term (context window) and Long-term (Vector DB/External logs) to
+                    maintain continuity.</li>
+                <li><strong>Tools:</strong> External capabilities (Google Search, Python Interpreter, SQL Engine)
+                    accessible via API.</li>
+            </ol>
+
+            <h3>The ReAct Loop</h3>
+            <p>Thought → Action → Observation → Thought... until the final answer is reached.</p>
+        </section>
+
+        <!-- Interview Questions -->
+        <section class="content-card">
+            <h2>🎤 Interview Q&A</h2>
+            <div class="qa-list">
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q1</span>
+                        <span>What is the difference between a Chain and an Agent?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ul>
+                            <li><strong>Chain:</strong> A hard-coded, sequential path of operations (e.g., Prompt A →
+                                Model → Process output). The developer decides the flow.</li>
+                            <li><strong>Agent:</strong> The LLM is the reasoning engine that decides which tools to call
+                                and in what order based on the user's input. The flow is dynamic and decided by the
+                                model.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <span class="q-icon">Q2</span>
+                        <span>How do you handle 'Hallucinated Tool Calls'?</span>
+                        <span class="toggle-icon">+</span>
+                    </div>
+                    <div class="qa-answer">
+                        <p><strong>Answer:</strong></p>
+                        <ol>
+                            <li><strong>Force Structured Output:</strong> Use OpenAI Function Calling or Pydantic models
+                                to ensure the JSON matches the expected schema.</li>
+                            <li><strong>Error Correction Loop:</strong> If the tool call fails, send the traceback back
+                                to the LLM so it can "self-correct" and try again.</li>
+                            <li><strong>Few-shot Examples:</strong> Provide examples in the prompt showing correct vs
+                                incorrect tool usage.</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Code Examples -->
+        <section class="content-card">
+            <h2>💻 Implementation Idea (LangChain)</h2>
+            <div class="code-example">
+                <div class="code-header">
+                    <span class="code-lang">Python</span>
+                    <span class="code-title">Defining a Simple Search Agent</span>
+                </div>
+                <pre><code class="language-python">from langchain_openai import ChatOpenAI
+from langchain.agents import create_openai_functions_agent, AgentExecutor
+from langchain import hub
+
+# 1. Load the "ReAct" prompt template
+prompt = hub.pull("hwchase17/openai-functions-agent")
+
+# 2. Define the Model and Tools
+llm = ChatOpenAI(model="gpt-4", temperature=0)
+tools = [SearchTool(), CalculatorTool()]
+
+# 3. Create the Agent
+agent = create_openai_functions_agent(llm, tools, prompt)
+
+# 4. Executor handles the loop (Agent Decisions -> Tool Exec -> Feedback)
+agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True)
+
+agent_executor.invoke({"input": "Search for the current weather in Paris and multiply it by 2."})</code></pre>
+            </div>
+        </section>
+
+        <!-- Practice Problem -->
+        <section class="content-card">
+            <h2>✍️ Practice Problem</h2>
+            <div class="practice-item">
+                <p>Scenario: You have multiple agents working together (Multi-Agent). One agent's output is consistently
+                    poor, making the whole chain fail. How do you triage this?</p>
+                <button class="reveal-btn" onclick="toggleSolution(this)">Show Solution</button>
+                <div class="solution hidden">
+                    <ol>
+                        <li><strong>Tracing:</strong> Use LangSmith to isolate the specific agent trace.</li>
+                        <li><strong>Unit Testing:</strong> Run that specific agent on a fixed dataset of inputs to see
+                            where its reasoning breaks.</li>
+                        <li><strong>Prompt Optimization:</strong> Check if the system prompt is too broad or if it needs
+                            clearer "Stop Sequences" to prevent runaway generation.</li>
+                        <li><strong>Switch Models:</strong> If reasoning is too complex, upgrade that specific expert to
+                            a better model (e.g., GPT-3.5 to GPT-4).</li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mark Complete -->
+        <div class="complete-section">
+            <button class="btn-complete" id="mark-complete">
+                <span class="check-icon">✓</span>
+                Mark Topic as Complete
+            </button>
+        </div>
+    </main>
+
+    <script src="topic.js"></script>
+</body>
+
+</html>

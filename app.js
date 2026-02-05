@@ -1,5 +1,6 @@
 /* ==========================================
-   Ankit's Interview Prep Hub - Application Logic
+   AI/ML Interview Prep Hub - Application Logic
+   // 5 years experience • Targeting Tier 2 MNCs • GenAI Specialist
    ========================================== */
 
 // ==========================================
@@ -517,8 +518,8 @@ const stories = [
     {
         company: "T",
         companyName: "Trident",
-        title: "VIS Platform v1 → v2 Upgrade",
-        role: "Lead Developer",
+        title: "Platform v1 → v2 Upgrade",
+        role: "Software Developer",
         impact: "40% efficiency gain",
         star: {
             situation: "Legacy VIS platform couldn't handle multi-camera streams or integrate with PLCs.",
@@ -555,12 +556,12 @@ const stories = [
     },
     {
         company: "A",
-        companyName: "AgriWatch",
-        title: "LLM-powered Market Reports",
-        role: "Data Scientist",
+        companyName: "Example Corp",
+        title: "Market Analysis Automation",
+        role: "AI Developer",
         impact: "70% effort reduction",
         star: {
-            situation: "Manual financial market reporting consuming significant analyst time.",
+            situation: "Manual financial market reporting consuming significant team time.",
             task: "Automate report generation while maintaining quality and accuracy.",
             action: "Designed LLM API pipeline for market summaries with validation checks.",
             result: "70% reduction in manual effort, improved report consistency and speed."

@@ -295,7 +295,7 @@ function robustHighlight(text) {
         return id;
     });
 
-    // 2. Other tokens
+    // 2. Other tokens - Using capturing groups to safely replace
     processed = processed
         .replace(/\b(def|class|if|else|elif|import|from|as|with|try|except|finally|pass|in|is|not|and|or|lambda|yield|async|await)\b/g, '<span class="token keyword">$1</span>')
         .replace(/\b(return|for|while|break|continue)\b/g, '<span class="token control">$1</span>')
@@ -303,7 +303,7 @@ function robustHighlight(text) {
         .replace(/\b(\d+)\b/g, '<span class="token number">$1</span>')
         .replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)(?=\()/g, '<span class="token function">$1</span>')
         .replace(/(@[a-zA-Z_][a-zA-Z0-9_]*)/g, '<span class="token decorator">$1</span>')
-        .replace(/[+\-*\/=<>!&|%^~]/g, '<span class="token operator">$1</span>');
+        .replace(/([+\-*\/=<>!&|%^~])/g, '<span class="token operator">$1</span>');
 
     // 3. Put containers back
     containers.forEach(item => {
